@@ -21,6 +21,7 @@
 #
 ##############################################################################
 
+from . import company
 from . import partner
 from . import account
 from . import wizard

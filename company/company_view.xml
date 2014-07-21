@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="e_invoice_view_company_form" model="ir.ui.view">
+        <field name="name">res.company.e_invoice.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <page string="Configuration" position="inside">
+                <separator string="E-Invoice" colspan="4"/>
+                <field name="e_invoice_ftp_path" colspan="4"/>
+                <field name="e_invoice_ftp_username" colspan="2"
+                    attrs="{'required': [('e_invoice_ftp_path', '!=', False)]}"/>
+                <field name="e_invoice_ftp_password" colspan="2"
+                    attrs="{'required': [('e_invoice_ftp_path', '!=', False)]}"/>
+            </page>
+        </field>
+    </record>
+
+</data>
+</openerp>
