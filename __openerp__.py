@@ -36,7 +36,9 @@ Modulo di gestione fatturazione elettronica""",
         'partner/partner_view.xml',
         'company/company_view.xml',
         'account/account_view.xml',
-        'account/e-invoice_data.xml', ],
+        'account/e-invoice_data.xml',
+        'wizard/send_invoice_view.xml',
+         ],
     "active": False,
     "installable": True
 }
