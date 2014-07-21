@@ -96,7 +96,7 @@ class account_invoice(osv.osv):
             # ----- Create an attachment
             invoice = self.browse(cr, uid, invoice_ids[0], context)
             if invoice.einvoice_state == 'at':
-               _logger.info('invoice already processed %s' % (invoice.number))
+                _logger.info('invoice already processed %s' % (invoice.number))
                 continue
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
