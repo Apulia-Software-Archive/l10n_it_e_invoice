@@ -23,6 +23,14 @@
 
 from osv import fields, osv
 from tools.translate import _
+from ftplib import FTP
+import os
+import logging
+import netsvc
+import base64
+from datetime import datetime
+
+_logger = logging.getLogger('Sending E-Invoice')
 
 
 class account_invoice(osv.osv):
@@ -65,6 +73,69 @@ class account_invoice(osv.osv):
                     _('Error'),
                     _('Electronic Invoice but IPA code not found in partner'))
         return super(account_invoice, self).create(cr, uid, vals, context)
+
+    def check_output_xml_pa(self, cr, uid, ftp, ftp_vals, context=None):
+        # ----- Open the remote folder and read all the files
+        folder = 'output XML-PA'
+        ir_attachment = self.pool.get('ir.attachment')
+        ftp.cwd('%s%s' % (ftp_vals[4], folder))
+        file_list = []
+        ftp.retrlines('LIST', file_list.append)
+        for filename in file_list:
+            filename = filename.split(None, 8)[-1]
+            if not filename:
+                _logger.info('No file found')
+                continue
+            # ----- Extracts invoice number from file name
+            invoice_number = filename[13:].replace('_', '/')
+            # ----- Search the invoice
+            invoice_ids = self.search(
+                cr, uid, [('number', '=', invoice_number)])
+            if not invoice_ids:
+                _logger.info('No invoice found for number %s' % (
+                    invoice_number))
+            # ----- Create an attachment
+            local_filename = os.path.join(r"/tmp/", filename)
+            lf = open(local_filename, "wb")
+            ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
+            lf.close()
+            attachment_data = {
+                'name': filename,
+                'type': 'binary',
+                'datas_fname': filename,
+                'datas': base64.encodestring(
+                    open(local_filename, "rb").read()),
+                'res_name': filename,
+                'res_model': 'account.invoice',
+                'res_id': invoice_ids[0],
+                }
+            ir_attachment.create(cr, uid, attachment_data,
+                                 context=context)
+            invoice = self.browse(cr, uid, invoice_ids[0], context)
+            vals = {'einvoice_state': 'at',
+                    'history_ftpa': '%s\nScaricata ed allegata versione firmata \
+digitalmente della fattura XML PA in data \
+ %s' % (invoice.history_ftpa, str(datetime.today()))
+                    }
+            self.write(cr, uid, [invoice_ids[0]], vals, context)
+        return False
+
+    def force_check_einvoice_status(self, cr, uid, ids, context=None):
+        return self.check_einvoice_status(cr, uid, context)
+
+    def check_einvoice_status(self, cr, uid, ids, context=None):
+        company_obj = self.pool.get('res.company')
+        ftp_vals = company_obj.get_ftp_vals(cr, uid, False, context)
+        try:
+            ftp = FTP()
+            ftp.connect(ftp_vals[0], int(ftp_vals[1]))
+            ftp.login(ftp_vals[2], ftp_vals[3])
+            # ----- Loop all the folders on ftp server and check files
+            self.check_output_xml_pa(cr, uid, ftp, ftp_vals, context)
+            _logger.info('Close FTP Connection')
+            ftp.quit()
+        except:
+            raise osv.except_osv('Error', 'Error to FTP')
 
 
 class account_journal(osv.osv):

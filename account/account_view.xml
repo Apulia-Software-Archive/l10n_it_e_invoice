@@ -17,6 +17,7 @@
                     <field name="history_ftpa" readonly="1"/>
                     <field name="einvoice_state" colspan="4" readonly="1"/>
                     </group>
+                    <button name="force_check_einvoice_status" string="Force Status Check" type="object"/>
                 </page>
             </notebook>
         </field>
