@@ -58,8 +58,8 @@ class wizard_send_invoice(osv.osv_memory):
         return (True, ret_file_name)
 
     def upload_file(self, cr, uid, ftp_vals, folder, file_name, context):
-        ftp = FTP(ftp_vals[0], ftp_vals[1], ftp_vals[3])
         try:
+            ftp = FTP(ftp_vals[0], ftp_vals[1], ftp_vals[2])
             try:
                 ftp.cwd(folder)
                 # move to the desired upload directory
@@ -75,27 +75,27 @@ class wizard_send_invoice(osv.osv_memory):
                 _logger.info('Close FTP Connection')
                 ftp.quit()
         except:
-            traceback.print_exc()
+            raise osv.except_osv('Error', 'Connection Error to FTP')
 
     def send_invoice(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
         company_obj = self.pool.get('res.company')
-        ftp_vals = company_obj.get_ftp_vals(cr, uid, context)
+        ftp_vals = company_obj.get_ftp_vals(cr, uid, False, context)
 
         # ---- Setting the folder where put pdf file
         folder = 'input flusso PDF'
 
         # ---- Select the printing module to print and create PDF
         invoice_ids = context.get('active_ids', [])
-        invoice_obj = self.pool.get('account_invoice')
+        invoice_obj = self.pool.get('account.invoice')
         invoice = invoice_obj.browse(cr, uid, invoice_ids, context)[0]
-        report_name = invoice.jounral_id.printing_module.report_name or False
+        report_name = invoice.journal_id.printing_module.report_name or False
 
         # ---- Standard for file name is:
         # ---- ITpartita_iva_mittente<...>.pdf
         file_name = invoice.company_id.partner_id.vat
-        file_name += '<' + invoice.number + '>.pdf'
+        file_name += '<' + invoice.number.replace('/', '_') + '>'
 
         report = self.create_report(
             cr, uid, invoice_ids, report_name, file_name, False, context)
