@@ -107,7 +107,8 @@ class wizard_send_invoice(osv.osv_memory):
         # ---- Standard for file name is:
         # ---- ITpartita_iva_mittente<...>.pdf
         file_name = invoice.company_id.partner_id.vat
-        file_name += '<' + invoice.number.replace('/', '_') + '>'
+        #~ file_name += '<' + invoice.number.replace('/', '_') + '>'
+        file_name += invoice.number.replace('/', '_')
 
         report = self.create_report(
             cr, uid, invoice_ids, report_name, file_name, False, context)
