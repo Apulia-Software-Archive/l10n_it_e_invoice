@@ -9,12 +9,13 @@
         <field name="arch" type="xml">
             <notebook position="inside">
                 <page string="Electronic Invoice">
-                    <field name="nr_bollo" />
-                    <field name="codice_commessa" />
-                    <field name="codice_cup" />
-                    <field name="codice_cig" />
+                    <field name="nr_bollo" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
+                    <field name="codice_commessa" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
+                    <field name="codice_cup" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
+                    <field name="codice_cig" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
                     <group colspan="4">
-                    <field name="history_ftpa"/>
+                    <field name="history_ftpa" readonly="1"/>
+                    <field name="einvoice_state" colspan="4" readonly="1"/>
                     </group>
                 </page>
             </notebook>

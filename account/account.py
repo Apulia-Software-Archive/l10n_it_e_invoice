@@ -34,6 +34,21 @@ class account_invoice(osv.osv):
         'codice_cup': fields.char('Codice CUP', size=64),
         'codice_cig': fields.char('Codice CIG', size=64),
         'history_ftpa': fields.text('Storico Trasmissione'),
+        'einvoice_state': fields.selection(
+            (('draft', 'Draft'),
+             ('sent', 'Sent to FTP'),
+             ('at', 'Avvenuta Trasmissione'),
+             ('dt', 'Notifica Decorrenza Termini'),
+             ('ec', 'Notifica Esito Cessionario Committente'),
+             ('mc', 'Notifica Mancanza Consegna'),
+             ('ne', 'Notifica Esito Cedente Prestatore'),
+             ('ns', 'Notifica di Scarto'),
+             ('rc', 'Ricevuta di Consegna'),
+             ('se', 'Notifica di Scarto Esito Cessionario Commitente'),
+             ), 'E-Invoice State'),
+        }
+    _defaults = {
+        'einvoice_state': 'draft',
         }
 
     def create(self, cr, uid, vals, context=None):
