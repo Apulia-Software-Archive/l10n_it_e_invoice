@@ -9,11 +9,14 @@
         <field name="arch" type="xml">
             <page string="Configuration" position="inside">
                 <separator string="E-Invoice" colspan="4"/>
-                <field name="e_invoice_ftp_path" colspan="4"/>
+                <field name="e_invoice_ftp_path" colspan="2"/>
+                <field name="e_invoice_ftp_port" colspan="2"
+                    attrs="{'required': [('e_invoice_ftp_path', '!=', False)]}"/>
                 <field name="e_invoice_ftp_username" colspan="2"
                     attrs="{'required': [('e_invoice_ftp_path', '!=', False)]}"/>
                 <field name="e_invoice_ftp_password" colspan="2"
                     attrs="{'required': [('e_invoice_ftp_path', '!=', False)]}"/>
+                <field name="e_invoice_ftp_filepath" colspan="2"/>
             </page>
         </field>
     </record>

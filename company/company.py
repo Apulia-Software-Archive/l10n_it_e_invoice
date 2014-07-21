@@ -29,10 +29,13 @@ class res_company(osv.osv):
    _inherit = "res.company"
    
    _columns = {
-        'e_invoice_ftp_path': fields.char('FTP path for e-invoice', size=128, 
-                                          help="Example: XX.XX.XX.XX:PP"),
+        'e_invoice_ftp_path': fields.char('FTP path for e-invoice', size=128),
+        'e_invoice_ftp_port': fields.char('FTP port for e-invoice', size=8),
         'e_invoice_ftp_username': fields.char('Username', size=64),
         'e_invoice_ftp_password': fields.char('Password', size=64),
+        'e_invoice_ftp_filepath': fields.char('FTP File path for e-invoice',
+                                              size=128,
+                                              help='e-invoice/'),
    }
 
    def get_ftp_vals(self, cr, uid, company_id=False, context=None):
@@ -47,5 +50,7 @@ class res_company(osv.osv):
                 _('Error'),
                 _('Define an FTP path for this company'))
         return (company.e_invoice_ftp_path,
+                company.e_invoice_ftp_port or '21',
                 company.e_invoice_ftp_username,
-                company.e_invoice_ftp_password)
+                company.e_invoice_ftp_password,
+                company.e_invoice_ftp_filepath or '')

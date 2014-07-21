@@ -59,9 +59,11 @@ class wizard_send_invoice(osv.osv_memory):
 
     def upload_file(self, cr, uid, ftp_vals, folder, file_name, context):
         try:
-            ftp = FTP(ftp_vals[0], ftp_vals[1], ftp_vals[2])
+            ftp = FTP()
+            ftp.connect(ftp_vals[0], int(ftp_vals[1]))
+            ftp.login(ftp_vals[2], ftp_vals[3])
             try:
-                ftp.cwd(folder)
+                ftp.cwd('%s%s' % (ftp_vals[4], folder))
                 # move to the desired upload directory
                 _logger.info('Currently in: %s', ftp.pwd())
                 _logger.info('Uploading: %s', file_name)
@@ -75,7 +77,7 @@ class wizard_send_invoice(osv.osv_memory):
                 _logger.info('Close FTP Connection')
                 ftp.quit()
         except:
-            raise osv.except_osv('Error', 'Connection Error to FTP')
+            raise osv.except_osv('Error', 'Error to FTP')
 
     def send_invoice(self, cr, uid, ids, context=None):
         if context is None:
@@ -105,11 +107,11 @@ class wizard_send_invoice(osv.osv_memory):
                 _('Error'),
                 _('PDF is not ready!'))
         self.upload_file(
-            cr, uid, ftp_vals, folder, report_file, context)
-        history = invoice.history_ftpa
-        history += "/n"
-        history += "Fattura inviata in data %s", (
-            str(datetime.datetime.today()))
+            cr, uid, ftp_vals, folder, report_file[0], context)
+        history = invoice.history_ftpa or ''
+        history = '%s\n' % (history)
+        history = "%sFattura inviata in data %s" % (
+            history, str(datetime.datetime.today()))
         invoice_obj.write(
             cr, uid, invoice_ids[0], {'history_ftpa': history}, context)
 
