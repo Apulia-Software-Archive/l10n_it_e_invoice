@@ -61,6 +61,9 @@ class account_journal(osv.osv):
             help="Check this box to determine that each entry of this journal\
  will be managed with Italian protocol for Electronical Invoice. Please use\
  the sequence like PA/xxxxxx"),
+        'printing_module': fields.many2one(
+            'ir.actions.report.xml', 'Printing Module',
+            help="Printing module for e-invoice"),
     }
 
     _defaults = {

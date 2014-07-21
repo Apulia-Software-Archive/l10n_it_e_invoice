@@ -20,8 +20,17 @@
 ##############################################################################
 
 
-from osv import fields, osv
+from osv import osv
 from tools.translate import _
+import logging
+import netsvc
+import os
+from ftplib import FTP
+import datetime
+import traceback
+
+
+_logger = logging.getLogger('Sending E-Invoice')
 
 
 class wizard_send_invoice(osv.osv_memory):
@@ -29,16 +38,79 @@ class wizard_send_invoice(osv.osv_memory):
     _name = "wizard.send.invoice"
     _description = "Wizard For Sening E-Invoice"
 
-    _columns = {
-        
-        }
+    def create_report(self, cr, uid, res_ids,
+                      report_name=False, file_name=False,
+                      data=False, context=False):
+        if not report_name or not res_ids:
+            return (
+                False,
+                Exception('Report name and Resources ids are required !!!'))
+        try:
+            ret_file_name = '/tmp/'+file_name+'.pdf'
+            service = netsvc.LocalService("report."+report_name);
+            (result, format) = service.create(cr, uid, res_ids, data, context)
+            fp = open(ret_file_name, 'wb+');
+            fp.write(result);
+            fp.close();
+        except Exception, e:
+            print 'Exception in create report:', e
+            return (False, str(e))
+        return (True, ret_file_name)
+
+    def upload_file(self, cr, uid, ftp_vals, folder, file_name, context):
+        ftp = FTP(ftp_vals[0], ftp_vals[1], ftp_vals[3])
+        try:
+            try:
+                ftp.cwd(folder)
+                # move to the desired upload directory
+                _logger.info('Currently in: %s', ftp.pwd())
+                _logger.info('Uploading: %s', file_name)
+                fullname = file_name
+                name = os.path.split(fullname)[1]
+                f = open(fullname, "rb")
+                ftp.storbinary('STOR ' + name, f)
+                f.close()
+                _logger.info('Done!')
+            finally:
+                _logger.info('Close FTP Connection')
+                ftp.quit()
+        except:
+            traceback.print_exc()
 
     def send_invoice(self, cr, uid, ids, context=None):
-        if context is None: context = {}
-        
+        if context is None:
+            context = {}
+        company_obj = self.pool.get('res.company')
+        ftp_vals = company_obj.get_ftp_vals(cr, uid, context)
 
-    def (self, cr, uid, ids, context={}):
-        
+        # ---- Setting the folder where put pdf file
+        folder = 'input flusso PDF'
+
+        # ---- Select the printing module to print and create PDF
+        invoice_ids = context.get('active_ids', [])
+        invoice_obj = self.pool.get('account_invoice')
+        invoice = invoice_obj.browse(cr, uid, invoice_ids, context)[0]
+        report_name = invoice.jounral_id.printing_module.report_name or False
+
+        # ---- Standard for file name is:
+        # ---- ITpartita_iva_mittente<...>.pdf
+        file_name = invoice.company_id.partner_id.vat
+        file_name += '<' + invoice.number + '>.pdf'
+
+        report = self.create_report(
+            cr, uid, invoice_ids, report_name, file_name, False, context)
+        report_file = report[0] and [report[1]] or []
+        if not report_file:
+            raise osv.except_osv(
+                _('Error'),
+                _('PDF is not ready!'))
+        self.upload_file(
+            cr, uid, ftp_vals, folder, report_file, context)
+        history = invoice.history_ftpa
+        history += "/n"
+        history += "Fattura inviata in data %s", (
+            str(datetime.datetime.today()))
+        invoice_obj.write(
+            cr, uid, invoice_ids[0], {'history_ftpa': history}, context)
+
         return {'type': 'ir.actions.act_window_close'}
-
-()

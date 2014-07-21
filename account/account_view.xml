@@ -29,6 +29,7 @@
         <field name="arch" type="xml">
             <field name="entry_posted" position="after">
                 <field name="e_invoice"/>
+                <field name="printing_module"/>
             </field>
         </field>
     </record>
