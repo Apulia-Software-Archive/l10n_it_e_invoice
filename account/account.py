@@ -26,7 +26,6 @@ from tools.translate import _
 from ftplib import FTP
 import os
 import logging
-import netsvc
 import base64
 from datetime import datetime
 
@@ -95,6 +94,10 @@ class account_invoice(osv.osv):
                 _logger.info('No invoice found for number %s' % (
                     invoice_number))
             # ----- Create an attachment
+            invoice = self.browse(cr, uid, invoice_ids[0], context)
+            if invoice.einvoice_state == 'at':
+               _logger.info('invoice already processed %s' % (invoice.number))
+                continue
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
             ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
@@ -111,12 +114,11 @@ class account_invoice(osv.osv):
                 }
             ir_attachment.create(cr, uid, attachment_data,
                                  context=context)
-            invoice = self.browse(cr, uid, invoice_ids[0], context)
+
             vals = {'einvoice_state': 'at',
-                    'history_ftpa': '%s\nScaricata ed allegata versione firmata \
-digitalmente della fattura XML PA in data \
- %s' % (invoice.history_ftpa, str(datetime.today()))
-                    }
+                    'history_ftpa': '%s\nScaricata ed allegata versione \
+firmata digitalmente della fattura XML PA in data \
+%s' % (invoice.history_ftpa, str(datetime.today()))}
             self.write(cr, uid, [invoice_ids[0]], vals, context)
         return False
 
