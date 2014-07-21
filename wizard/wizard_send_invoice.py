@@ -27,7 +27,6 @@ import netsvc
 import os
 from ftplib import FTP
 import datetime
-import traceback
 
 
 _logger = logging.getLogger('Sending E-Invoice')
@@ -47,11 +46,11 @@ class wizard_send_invoice(osv.osv_memory):
                 Exception('Report name and Resources ids are required !!!'))
         try:
             ret_file_name = '/tmp/'+file_name+'.pdf'
-            service = netsvc.LocalService("report."+report_name);
+            service = netsvc.LocalService("report."+report_name)
             (result, format) = service.create(cr, uid, res_ids, data, context)
-            fp = open(ret_file_name, 'wb+');
-            fp.write(result);
-            fp.close();
+            fp = open(ret_file_name, 'wb+')
+            fp.write(result)
+            fp.close()
         except Exception, e:
             print 'Exception in create report:', e
             return (False, str(e))
@@ -94,6 +93,17 @@ class wizard_send_invoice(osv.osv_memory):
         invoice = invoice_obj.browse(cr, uid, invoice_ids, context)[0]
         report_name = invoice.journal_id.printing_module.report_name or False
 
+        # ---- check if invoice can be send to SDI
+        if not invoice.journal_id.e_invoice:
+            raise osv.except_osv(
+                _('Error'),
+                _('Is not E-Invoice check your Journal config!'))
+        if invoice.einvoice_state not in ('draft', 'sent'):
+            raise osv.except_osv(
+                _('Error!'),
+                _('invoice has already been processed, \
+                   you can not proceed to send!'))
+
         # ---- Standard for file name is:
         # ---- ITpartita_iva_mittente<...>.pdf
         file_name = invoice.company_id.partner_id.vat
@@ -113,6 +123,7 @@ class wizard_send_invoice(osv.osv_memory):
         history = "%sFattura inviata in data %s" % (
             history, str(datetime.datetime.today()))
         invoice_obj.write(
-            cr, uid, invoice_ids[0], {'history_ftpa': history}, context)
+            cr, uid, invoice_ids[0],
+            {'history_ftpa': history, 'einvoice_state': 'sent'}, context)
 
         return {'type': 'ir.actions.act_window_close'}
