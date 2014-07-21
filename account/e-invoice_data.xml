@@ -13,8 +13,8 @@
         </record>
 
         <record id="e-inoice_journal" model="account.journal">
-            <field name="name">zE-Invoice Journal</field>
-            <field name="code">EI</field>
+            <field name="name">E-Invoice Journal</field>
+            <field name="code">ZEI</field>
             <field name="type">sale</field>
             <field name="view_id" ref="account.account_sp_journal_view"/>
             <field name="sequence_id" ref="seq_e-invoice"/>
