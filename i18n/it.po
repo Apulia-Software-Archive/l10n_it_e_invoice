@@ -1,0 +1,105 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* l10n_it_e-invoice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 6.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-06-14 09:15+0000\n"
+"PO-Revision-Date: 2014-06-14 09:15+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_it_e-invoice
+#: sql_constraint:account.invoice:0
+msgid "Invoice Number must be unique per Company!"
+msgstr "Nell'azienda il numero fattura dev'essere univoco!"
+
+#. module: l10n_it_e-invoice
+#: code:addons/l10n_it_e-invoice/account/account.py:51
+#, python-format
+msgid "Electronic Invoice but IPA code not found in partner"
+msgstr "Fattura Elettronica con codice IPA non presente nel partner"
+
+#. module: l10n_it_e-invoice
+#: model:ir.model,name:l10n_it_e-invoice.model_account_journal
+msgid "Journal"
+msgstr "Sezionale"
+
+#. module: l10n_it_e-invoice
+#: sql_constraint:account.journal:0
+msgid "The name of the journal must be unique per company !"
+msgstr "Il nome del sezionale deve essere unico per ogni azienda!"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,codice_cup:0
+msgid "Codice CUP"
+msgstr "Codice CUP"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,codice_cig:0
+msgid "Codice CIG"
+msgstr "Codice CIG"
+
+#. module: l10n_it_e-invoice
+#: view:account.invoice:0
+#: field:account.journal,e_invoice:0
+msgid "Electronic Invoice"
+msgstr "Fattura Elettronica"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,nr_bollo:0
+msgid "Numero Bollo"
+msgstr "Numero Bollo"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,codice_commessa:0
+msgid "Codice Commessa"
+msgstr "Codice Commessa"
+
+#. module: l10n_it_e-invoice
+#: constraint:account.journal:0
+msgid "Configuration error! The currency chosen should be shared by the default accounts too."
+msgstr "Errore di configurazione!  La valuta selezionata deve essere anche condivisa dai conti di default."
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,history_ftpa:0
+msgid "Storico Trasmissione"
+msgstr "Storico Trasmissione"
+
+#. module: l10n_it_e-invoice
+#: model:ir.model,name:l10n_it_e-invoice.model_account_invoice
+msgid "Invoice"
+msgstr "Fattura"
+
+#. module: l10n_it_e-invoice
+#: code:addons/l10n_it_e-invoice/account/account.py:50
+#, python-format
+msgid "Error"
+msgstr "Errore"
+
+#. module: l10n_it_e-invoice
+#: model:ir.model,name:l10n_it_e-invoice.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: l10n_it_e-invoice
+#: field:res.partner,ipa_code:0
+msgid "IPA Code"
+msgstr "IPA Code"
+
+#. module: l10n_it_e-invoice
+#: help:account.journal,e_invoice:0
+msgid "Check this box to determine that each entry of this journal will be managed with Italian protocol for Electronical Invoice. Please use the sequence like PA/xxxxxx"
+msgstr "Selezionare questo campo per indicare che questo sezionale sarà gestito secondo la normativa Italiana per la Fatturazione Elettronica verso la Pubblica Amministrazione. Utilizzare una sequence del tipo PA/xxxxxx"
+
+#. module: l10n_it_e-invoice
+#: sql_constraint:account.journal:0
+msgid "The code of the journal must be unique per company !"
+msgstr "Il codice del sezionale deve essere unico per una stessa azienda!"
+

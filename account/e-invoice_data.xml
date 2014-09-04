@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<openerp>
+    <data noupdate="1">
+        <record model="ir.sequence.type" id="seq_type_e-invoice">
+            <field name="name">E-Invoice Code</field>
+            <field name="code">account.invoice</field>
+        </record>
+        <record model="ir.sequence" id="seq_e-invoice">
+            <field name="name">E-Invoice</field>
+            <field name="code">account.invoice</field>
+            <field eval="6" name="padding"/>
+            <field name="prefix">PA/</field>
+        </record>
+
+        <record id="e-inoice_journal" model="account.journal">
+            <field name="name">E-Invoice Journal</field>
+            <field name="code">ZEI</field>
+            <field name="type">sale</field>
+            <field name="view_id" ref="account.account_sp_journal_view"/>
+            <field name="sequence_id" ref="seq_e-invoice"/>
+            <field name="e_invoice">True</field>
+        </record>
+    </data>
+</openerp>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+    <data>
+        
+        <!-- ====================================================== -->
+        <!--                         WIZARD                         -->
+        <!-- ====================================================== -->
+        <record id="wizard_send_einvoice" model="ir.ui.view">
+            <field name="name">wizard.send.e-invoice</field>
+            <field name="model">wizard.send.invoice</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Sendig of E-Invoice">
+                    <group>
+                        <button string="Cancel" special="cancel" icon="gtk-cancel" colspan="2"/>
+                        <button string="Send Invoice" name="send_invoice" type="object" icon="gtk-ok" colspan="2"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+    
+        <!-- ====================================================== -->
+        <!--                     WIZARD ACTION                      -->
+        <!-- ====================================================== -->
+        <record id="action_send_e-invoice" model="ir.actions.act_window">
+            <field name="name">Send E-Invoice</field>
+            <field name="res_model">wizard.send.invoice</field>
+            <field name="src_model">account.invoice</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="wizard_send_einvoice"/>
+        </record>
+        
+        <!-- ====================================================== -->
+        <!--                     WIZARD BUTTON                      -->
+        <!-- ====================================================== -->
+        <act_window id="act_send_einvoice"
+            key2="client_action_multi"
+            name="Send E-Invoice"
+            res_model="wizard.send.invoice"
+            src_model="account.invoice"
+            view_id="wizard_send_einvoice"
+            view_mode="form" target="new" view_type="form" />
+
+    </data>
+</openerp>
