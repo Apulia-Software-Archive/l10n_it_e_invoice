@@ -1,0 +1,5 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+
+einvoice_history_user, einvoice_history user,model_einvoice_history,e_invoice_user,1,0,0,0
+
+einvoice_history_manager, einvoice_history_user manager,model_einvoice_history,e_invoice_manager,1,1,1,1

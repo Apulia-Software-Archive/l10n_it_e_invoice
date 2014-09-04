@@ -33,12 +33,14 @@ Modulo di gestione fatturazione elettronica""",
     'license': 'AGPL-3',
     "depends": ['account', ],
     "data": [
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'partner/partner_view.xml',
         'company/company_view.xml',
         'account/account_view.xml',
         'account/e-invoice_data.xml',
         'wizard/send_invoice_view.xml',
-         ],
+        ],
     "active": False,
     "installable": True
 }

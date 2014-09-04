@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="e_invoice_user" model="res.groups">
+            <field name="name">E-Invoice User</field>
+        </record>
+
+        <record id="e_invoice_manager" model="res.groups">
+            <field name="name">E-Invoice Manager</field>
+            <field name="implied_ids" eval="[(4, ref('e_invoice_user'))]"/>
+        </record>
+
+    </data>
+</openerp>

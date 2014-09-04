@@ -28,6 +28,7 @@ import os
 import logging
 import base64
 from datetime import datetime
+from xml.dom.minidom import parse
 
 _logger = logging.getLogger('Sending E-Invoice')
 
@@ -41,6 +42,7 @@ class account_invoice(osv.osv):
         'codice_cup': fields.char('Codice CUP', size=64),
         'codice_cig': fields.char('Codice CIG', size=64),
         'history_ftpa': fields.text('Storico Trasmissione'),
+        'sdi_file_name': fields.char('Sdi File Name', size=128),
         'einvoice_state': fields.selection(
             (('draft', 'Draft'),
              ('sent', 'Sent to FTP'),
@@ -53,6 +55,8 @@ class account_invoice(osv.osv):
              ('rc', 'Ricevuta di Consegna'),
              ('se', 'Notifica di Scarto Esito Cessionario Commitente'),
              ), 'E-Invoice State'),
+        'history_change': fields.one2many(
+            'einvoice.history', 'name', 'Historic Change'),
         }
     _defaults = {
         'einvoice_state': 'draft',
@@ -72,6 +76,44 @@ class account_invoice(osv.osv):
                     _('Error'),
                     _('Electronic Invoice but IPA code not found in partner'))
         return super(account_invoice, self).create(cr, uid, vals, context)
+
+    def convert_timestamp(self, value):
+        return datetime.fromtimestamp(
+            int(value)).strftime('%Y-%m-%d %H:%M:%S')
+
+    def read_xml_file(self, cr, uid, local_filename, invoice_id, context=None):
+        parser = parse(local_filename)
+        vals = {}
+        file_data = open(local_filename, "rb").read()
+        vals.update({'name': invoice_id, 'xml_content': file_data})
+        for tags in parser.getElementsByTagName("esito"):
+            for node in tags.getElementsByTagName("timestamp"):
+                for value in node.childNodes:
+                    date = self.convert_timestamp(value.data)
+                    vals.update({
+                        'date': date})
+            for node in tags.getElementsByTagName("stato"):
+                for value in node.childNodes:
+                    vals.update({
+                        'status_code': value.data})
+            for node in tags.getElementsByTagName("msgErrore"):
+                for value in node.childNodes:
+                    vals.update({
+                        'status_desc': value.data})
+            for node in tags.getElementsByTagName("nomeFileSdi"):
+                for value in node.childNodes:
+                    note = "Nome file firmato: " + value.data
+                    vals.update({
+                        'note': note})
+                    self.pool.get('account.invoice').write(
+                        cr, uid, [invoice_id],
+                        {'sdi_file_name': value.data}, context)
+            for node in tags.getElementsByTagName("codStato"):
+                for value in node.childNodes:
+                    note = "Codice di Errore SDI: " + value.data
+                    vals.update({
+                        'note': note})
+        return vals
 
     def check_output_xml_pa(self, cr, uid, ftp, ftp_vals, company_vat,
                             context=None):
@@ -125,6 +167,77 @@ firmata digitalmente della fattura XML PA in data \
             self.write(cr, uid, [invoice_ids[0]], vals, context)
         return False
 
+    def check_edi_state_file(self, cr, uid, ftp, ftp_vals, company_vat,
+                             context=None):
+        # ----- Open the remote folder and read all the files
+        folder = 'output notifiche SdI'
+        ftp.cwd('%s%s' % (ftp_vals[4], folder))
+        file_list = []
+        ftp.retrlines('LIST', file_list.append)
+        for filename in file_list:
+            filename = filename.split(None, 8)[-1]
+            if not filename:
+                _logger.info('No file found')
+                continue
+            if not filename.startswith(company_vat):
+                continue
+            filename_value = filename.split('_')
+            # ----- Search the invoice
+            invoice_ids = self.search(
+                cr, uid, [('sdi_file_name', '=', filename_value[1])])
+            if not invoice_ids:
+                _logger.info('No invoice found for number %s' % (
+                    filename_value[1]))
+            # ----- Extract datas from XML file
+            local_filename = os.path.join(r"/tmp/", filename)
+            lf = open(local_filename, "wb")
+            ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
+            lf.close()
+            vals = self.read_xml_file(
+                cr, uid, local_filename, invoice_ids[0], context)
+            # ----- Move file in backup folder
+            ftp.rename(
+                filename, ftp_vals[4] + '/elaborati/' + filename)
+            # ----- Write historic change
+            self.pool.get('einvoice.history').create(cr, uid, vals, context)
+        return True
+
+    def check_xml_state_file(self, cr, uid, ftp, ftp_vals, company_vat,
+                             context=None):
+        # ----- Open the remote folder and read all the files
+        folder = 'Stati delle fatture'
+        ftp.cwd('%s%s' % (ftp_vals[4], folder))
+        file_list = []
+        ftp.retrlines('LIST', file_list.append)
+        for filename in file_list:
+            filename = filename.split(None, 8)[-1]
+            if not filename:
+                _logger.info('No file found')
+                continue
+            if not filename.startswith(company_vat):
+                continue
+            filename_value = filename.split('_')
+            invoice_number = filename_value[1].replace('-', '/')
+            # ----- Search the invoice
+            invoice_ids = self.search(
+                cr, uid, [('number', '=', invoice_number)])
+            if not invoice_ids:
+                _logger.info('No invoice found for number %s' % (
+                    invoice_number))
+            # ----- Extract datas from XML file
+            local_filename = os.path.join(r"/tmp/", filename)
+            lf = open(local_filename, "wb")
+            ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
+            lf.close()
+            vals = self.read_xml_file(
+                cr, uid, local_filename, invoice_ids[0], context)
+            # ----- Move file in backup folder
+            ftp.rename(
+                filename, ftp_vals[4] + '/elaborati/' + filename)
+            # ----- Write historic change
+            self.pool.get('einvoice.history').create(cr, uid, vals, context)
+        return True
+
     def force_check_einvoice_status(self, cr, uid, ids, context=None):
         return self.check_einvoice_status(cr, uid, context)
 
@@ -139,6 +252,10 @@ firmata digitalmente della fattura XML PA in data \
             # ----- Loop all the folders on ftp server and check files
             self.check_output_xml_pa(cr, uid, ftp, ftp_vals, company_vat,
                                      context)
+            self.check_edi_state_file(cr, uid, ftp, ftp_vals, company_vat,
+                                      context)
+            self.check_xml_state_file(cr, uid, ftp, ftp_vals, company_vat,
+                                      context)
             _logger.info('Close FTP Connection')
             ftp.quit()
         except:
@@ -161,4 +278,19 @@ class account_journal(osv.osv):
 
     _defaults = {
         'e_invoice': False,
+    }
+
+
+class einvoice_history(osv.osv):
+
+    _name = "einvoice.history"
+
+    _columns = {
+        'name': fields.many2one(
+            'account.invoice', 'Invoice', required=True, ondelete='cascade'),
+        'date': fields.datetime('Date Action', required=True),
+        'note': fields.text('Note'),
+        'status_code': fields.char('Status Code', size=25),
+        'status_desc': fields.text('Status Desc'),
+        'xml_content': fields.text('XML File Content'),
     }

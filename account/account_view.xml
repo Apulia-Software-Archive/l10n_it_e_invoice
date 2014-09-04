@@ -15,9 +15,31 @@
                     <field name="codice_cig" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
                     <group colspan="4">
                     <field name="history_ftpa" readonly="1"/>
-                    <field name="einvoice_state" colspan="4" readonly="1"/>
+                    <field name="sdi_file_name" colspan="4" readonly="1"/>
+                    <field name="einvoice_state" invisible="1"/>
                     </group>
                     <button name="force_check_einvoice_status" string="Force Status Check" type="object"/>
+                    <group colspan="4">
+                    <field name="history_change"
+                        nolabel="1" readonly="1">
+                        <form string="History Change">
+                            <field name="date"/>
+                            <field name="status_code"/>
+                            <newline/>
+                            <field name="status_desc"/>
+                            <newline/>
+                            <field name="note"/>
+                            <newline/>
+                            <field name="xml_content"/>
+                        </form>
+                        <tree string="History Change">
+                            <field name="date"/>
+                            <field name="status_code"/>
+                            <field name="status_desc"/>
+                            <field name="note"/>
+                        </tree>
+                    </field>
+                    </group>
                 </page>
             </notebook>
         </field>
