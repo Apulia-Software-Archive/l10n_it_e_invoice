@@ -18,6 +18,7 @@
             <field name="type">sale</field>
             <field name="view_id" ref="account.account_sp_journal_view"/>
             <field name="sequence_id" ref="seq_e-invoice"/>
+            <field name="printing_module" ref="account_e_invoices"/>
             <field name="e_invoice">True</field>
         </record>
     </data>
