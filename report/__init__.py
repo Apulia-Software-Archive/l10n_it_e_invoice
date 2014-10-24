@@ -21,27 +21,5 @@
 #
 ##############################################################################
 
-{
-    'name': "Electronic Invoice",
-    'version': '0.1',
-    'category': 'Account',
-    'description': """
-Electronic Invoice Management - Italian Law
-Modulo di gestione fatturazione elettronica""",
-    'author': 'Apulia Software srl <info@apuliasoftware.it>',
-    'website': 'www.apuliasoftware.it',
-    'license': 'AGPL-3',
-    "depends": ['account', ],
-    "data": [
-        'security/security.xml',
-        'security/ir.model.access.csv',
-        'partner/partner_view.xml',
-        'company/company_view.xml',
-        'account/account_view.xml',
-        'report/account_report.xml',
-        'account/e-invoice_data.xml',
-        'wizard/send_invoice_view.xml',
-        ],
-    "active": False,
-    "installable": True
-}
+
+import account_print_invoice

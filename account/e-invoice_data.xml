@@ -17,6 +17,7 @@
             <field name="code">ZEI</field>
             <field name="sequence_id" ref="seq_e-invoice"/>
             <field name="e_invoice">True</field>
+            <field name="printing_module" ref="account_e_invoices"/>
             <field name="type">sale</field>
         </record>
     </data>
