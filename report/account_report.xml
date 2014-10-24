@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <report
+            auto="False"
+            id="account_e_invoices"
+            model="account.invoice"
+            name="account.e_invoice"
+            rml="l10n_it_e_invoice/report/account_print_e_invoice.rml"
+            string="E-Invoices"
+            usage="default"
+            multi="True"/>
+
+    </data>
+</openerp>
