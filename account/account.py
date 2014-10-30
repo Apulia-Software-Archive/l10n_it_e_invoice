@@ -216,8 +216,7 @@ firmata digitalmente della fattura XML PA in data \
                 continue
             if not filename.startswith(company_vat):
                 continue
-            filename_value = filename.split('_')
-            invoice_number = filename_value[1].replace('-', '/')
+            invoice_number = filename[13:22].replace('_','/')
             # ----- Search the invoice
             invoice_ids = self.search(
                 cr, uid, [('number', '=', invoice_number)])
