@@ -211,6 +211,7 @@ firmata digitalmente della fattura XML PA in data \
         ftp.retrlines('LIST', file_list.append)
         for filename in file_list:
             filename = filename.split(None, 8)[-1]
+            _logger.info('File to elaborate %s' % (filename))
             if not filename:
                 _logger.info('No file found')
                 continue
@@ -218,6 +219,7 @@ firmata digitalmente della fattura XML PA in data \
                 continue
             invoice_number = filename[13:22].replace('_','/')
             # ----- Search the invoice
+            _logger.info('Search the invoice %s' % (invoice_number))
             invoice_ids = self.search(
                 cr, uid, [('number', '=', invoice_number)])
             if not invoice_ids:
