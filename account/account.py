@@ -69,7 +69,7 @@ class account_invoice(osv.osv):
         partner_id = vals.get('partner_id', False)
         journal_obj = self.pool['account.journal']
         partner_obj = self.pool['res.partner']
-        if journal_obj.browse(cr, uid, journal_id, context).e_invoice:
+        if journal_id and partner_id and journal_obj.browse(cr, uid, journal_id, context).e_invoice:
             partner = partner_obj.browse(cr, uid, partner_id, context)
             if not partner.ipa_code:
                 raise osv.except_osv(
