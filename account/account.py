@@ -146,6 +146,7 @@ class account_invoice(osv.osv):
                 continue
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
+            filename = filename.split(None, 8)[-1]
             ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
             lf.close()
             attachment_data = {
