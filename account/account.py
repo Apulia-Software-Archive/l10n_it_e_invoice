@@ -124,14 +124,15 @@ class account_invoice(osv.osv):
         file_list = []
         ftp.retrlines('LIST', file_list.append)
         for filename in file_list:
-            filename = filename.split(None, 8)[-1]
+            filename = filename.split('#')[-1]
             if not filename:
                 _logger.info('No file found')
                 continue
             if not filename.startswith(company_vat):
                 continue
             # ----- Extracts invoice number from file name
-            invoice_number = filename[13:].replace('_', '/')
+            invoice_number = filename.split('.')[0].replace(
+                company_vat, '').replace('_', '/')
             # ----- Search the invoice
             invoice_ids = self.search(
                 cr, uid, [('number', '=', invoice_number)])
