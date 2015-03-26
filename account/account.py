@@ -125,8 +125,8 @@ class account_invoice(osv.osv):
             if vals.get('status_desc', False):
                 invoice = self.browse(cr, uid, invoice_id, context)
                 tools.email_send(
-                    'openerp@erp.it',
-                    ['a.gallina@cgsoftware.it'],
+                    invoice.company_id.email,
+                    [invoice.company_id.email],
                     'Controllo Fatture Elettroniche',
                     'Fattura: %s - Messaggio %s' %(invoice.internal_number,
                                                    vals.get('status_desc')),
