@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenERP Server 6.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-14 09:15+0000\n"
-"PO-Revision-Date: 2014-06-14 09:15+0000\n"
+"POT-Creation-Date: 2015-03-26 10:28+0000\n"
+"PO-Revision-Date: 2015-03-26 10:28+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,15 +16,95 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_it_e-invoice
-#: sql_constraint:account.invoice:0
-msgid "Invoice Number must be unique per Company!"
-msgstr "Nell'azienda il numero fattura dev'essere univoco!"
+#: field:res.company,e_invoice_ftp_filepath:0
+msgid "FTP File path for e-invoice"
+msgstr "Path FTP per le fatture elettroniche"
 
 #. module: l10n_it_e-invoice
-#: code:addons/l10n_it_e-invoice/account/account.py:51
-#, python-format
-msgid "Electronic Invoice but IPA code not found in partner"
-msgstr "Fattura Elettronica con codice IPA non presente nel partner"
+#: field:account.invoice,history_change:0
+msgid "Historic Change"
+msgstr "Storico Variazioni"
+
+#. module: l10n_it_e-invoice
+#: field:einvoice.history,status_desc:0
+msgid "Status Desc"
+msgstr "Descrizione Stato"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Sent to FTP"
+msgstr "Invia all'FTP"
+
+#. module: l10n_it_e-invoice
+#: field:account.journal,printing_module:0
+msgid "Printing Module"
+msgstr "Modulo di Stampa"
+
+#. module: l10n_it_e-invoice
+#: constraint:res.company:0
+msgid "Error! You can not create recursive companies."
+msgstr "Attenzione: non puoi creare aziende ricorsive"
+
+#. module: l10n_it_e-invoice
+#: model:ir.actions.act_window,name:l10n_it_e-invoice.act_send_einvoice
+#: model:ir.actions.act_window,name:l10n_it_e-invoice.action_send_e-invoice
+msgid "Send E-Invoice"
+msgstr "Invia Fattura Elettronica"
+
+#. module: l10n_it_e-invoice
+#: field:einvoice.history,note:0
+msgid "Note"
+msgstr "Note"
+
+#. module: l10n_it_e-invoice
+#: field:einvoice.history,date:0
+msgid "Date Action"
+msgstr "Data Azione"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,codice_commessa:0
+msgid "Codice Commessa"
+msgstr "Codice Commessa"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Draft"
+msgstr "Bozza"
+
+#. module: l10n_it_e-invoice
+#: view:account.invoice:0
+msgid "History Change"
+msgstr "Storico Variazioni"
+
+#. module: l10n_it_e-invoice
+#: view:wizard.send.invoice:0
+msgid "Send Invoice"
+msgstr "Invia Fattura"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,sdi_file_name:0
+msgid "Sdi File Name"
+msgstr "Nome File SDI"
+
+#. module: l10n_it_e-invoice
+#: model:ir.model,name:l10n_it_e-invoice.model_wizard_send_invoice
+msgid "Wizard For Sening E-Invoice"
+msgstr "Wizard di Invio Fattura Elettronica"
+
+#. module: l10n_it_e-invoice
+#: sql_constraint:res.company:0
+msgid "The company name must be unique !"
+msgstr "Il nome azienda deve essere unico!"
+
+#. module: l10n_it_e-invoice
+#: field:res.company,e_invoice_ftp_username:0
+msgid "Username"
+msgstr "Username"
+
+#. module: l10n_it_e-invoice
+#: view:wizard.send.invoice:0
+msgid "Sendig of E-Invoice"
+msgstr "Invio della Fattura Elettronica"
 
 #. module: l10n_it_e-invoice
 #: model:ir.model,name:l10n_it_e-invoice.model_account_journal
@@ -32,19 +112,99 @@ msgid "Journal"
 msgstr "Sezionale"
 
 #. module: l10n_it_e-invoice
-#: sql_constraint:account.journal:0
-msgid "The name of the journal must be unique per company !"
-msgstr "Il nome del sezionale deve essere unico per ogni azienda!"
-
-#. module: l10n_it_e-invoice
 #: field:account.invoice,codice_cup:0
 msgid "Codice CUP"
 msgstr "Codice CUP"
 
 #. module: l10n_it_e-invoice
-#: field:account.invoice,codice_cig:0
-msgid "Codice CIG"
-msgstr "Codice CIG"
+#: code:addons/l10n_it_e-invoice/company/company.py:54
+#, python-format
+msgid "Define an FTP path for this company"
+msgstr "Definire il percorso FTP nelle configurazioni"
+
+#. module: l10n_it_e-invoice
+#: model:ir.model,name:l10n_it_e-invoice.model_einvoice_history
+msgid "einvoice.history"
+msgstr "einvoice.history"
+
+#. module: l10n_it_e-invoice
+#: field:einvoice.history,status_code:0
+msgid "Status Code"
+msgstr "Codice Stato"
+
+#. module: l10n_it_e-invoice
+#: code:addons/l10n_it_e-invoice/wizard/wizard_send_invoice.py:119
+#, python-format
+msgid "PDF is not ready!"
+msgstr "Il PDF non e' pronto"
+
+#. module: l10n_it_e-invoice
+#: field:einvoice.history,xml_content:0
+msgid "XML File Content"
+msgstr "XML File Content"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Notifica Esito Cedente Prestatore"
+msgstr "Notifica Esito Cedente Prestatore"
+
+#. module: l10n_it_e-invoice
+#: view:res.company:0
+msgid "Configuration"
+msgstr "Configurazione"
+
+#. module: l10n_it_e-invoice
+#: help:account.journal,e_invoice:0
+msgid "Check this box to determine that each entry of this journal will be managed with Italian protocol for Electronical Invoice. Please use the sequence like PA/xxxxxx"
+msgstr "Selezionare questo campo per indicare che questo sezionale sarà gestito secondo la normativa Italiana per la Fatturazione Elettronica verso la Pubblica Amministrazione. Utilizzare una sequence del tipo PA/xxxxxx"
+
+#. module: l10n_it_e-invoice
+#: code:addons/l10n_it_e-invoice/wizard/wizard_send_invoice.py:104
+#, python-format
+msgid "invoice has already been processed,                    you can not proceed to send!"
+msgstr "Fattura gia' elaborata non puoi effetturare un nuovo invio!"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Notifica Esito Cessionario Committente"
+msgstr "Notifica Esito Cessionario Committente"
+
+#. module: l10n_it_e-invoice
+#: sql_constraint:account.journal:0
+msgid "The name of the journal must be unique per company !"
+msgstr "Il nome del sezionale deve essere unico per ogni azienda!"
+
+#. module: l10n_it_e-invoice
+#: view:account.invoice:0
+msgid "Force Status Check"
+msgstr "Forza Controllo di Stato"
+
+#. module: l10n_it_e-invoice
+#: model:ir.actions.report.xml,name:l10n_it_e-invoice.account_e_invoices
+msgid "E-Invoices"
+msgstr "Fatture Elettroniche"
+
+#. module: l10n_it_e-invoice
+#: field:einvoice.history,name:0
+#: model:ir.model,name:l10n_it_e-invoice.model_account_invoice
+msgid "Invoice"
+msgstr "Fattura"
+
+#. module: l10n_it_e-invoice
+#: code:addons/l10n_it_e-invoice/account/account.py:78
+#, python-format
+msgid "Electronic Invoice but IPA code not found in partner"
+msgstr "Fattura Elettronica con codice IPA non presente nel partner"
+
+#. module: l10n_it_e-invoice
+#: field:res.company,e_invoice_ftp_port:0
+msgid "FTP port for e-invoice"
+msgstr "Porta FTP per le fatture elettroniche"
+
+#. module: l10n_it_e-invoice
+#: model:ir.model,name:l10n_it_e-invoice.model_res_company
+msgid "Companies"
+msgstr "Aziende"
 
 #. module: l10n_it_e-invoice
 #: view:account.invoice:0
@@ -53,14 +213,26 @@ msgid "Electronic Invoice"
 msgstr "Fattura Elettronica"
 
 #. module: l10n_it_e-invoice
-#: field:account.invoice,nr_bollo:0
-msgid "Numero Bollo"
-msgstr "Numero Bollo"
+#: field:res.company,e_invoice_ftp_path:0
+msgid "FTP path for e-invoice"
+msgstr "Percorso FTP per le fatture elettroniche"
 
 #. module: l10n_it_e-invoice
-#: field:account.invoice,codice_commessa:0
-msgid "Codice Commessa"
-msgstr "Codice Commessa"
+#: code:addons/l10n_it_e-invoice/wizard/wizard_send_invoice.py:100
+#, python-format
+msgid "Is not E-Invoice check your Journal config!"
+msgstr "Il giornale selezionato non e' predisposto le fatture elettroniche"
+
+#. module: l10n_it_e-invoice
+#: code:addons/l10n_it_e-invoice/wizard/wizard_send_invoice.py:103
+#, python-format
+msgid "Error!"
+msgstr "Errore!"
+
+#. module: l10n_it_e-invoice
+#: model:res.groups,name:l10n_it_e-invoice.e_invoice_user
+msgid "E-Invoice User"
+msgstr "E-Invoice User"
 
 #. module: l10n_it_e-invoice
 #: constraint:account.journal:0
@@ -68,25 +240,68 @@ msgid "Configuration error! The currency chosen should be shared by the default 
 msgstr "Errore di configurazione!  La valuta selezionata deve essere anche condivisa dai conti di default."
 
 #. module: l10n_it_e-invoice
-#: field:account.invoice,history_ftpa:0
-msgid "Storico Trasmissione"
-msgstr "Storico Trasmissione"
+#: selection:account.invoice,einvoice_state:0
+msgid "Notifica di Scarto"
+msgstr "Notifica di Scarto"
 
 #. module: l10n_it_e-invoice
-#: model:ir.model,name:l10n_it_e-invoice.model_account_invoice
-msgid "Invoice"
-msgstr "Fattura"
-
-#. module: l10n_it_e-invoice
-#: code:addons/l10n_it_e-invoice/account/account.py:50
+#: code:addons/l10n_it_e-invoice/account/account.py:77
+#: code:addons/l10n_it_e-invoice/company/company.py:53
+#: code:addons/l10n_it_e-invoice/wizard/wizard_send_invoice.py:99
+#: code:addons/l10n_it_e-invoice/wizard/wizard_send_invoice.py:118
 #, python-format
 msgid "Error"
 msgstr "Errore"
 
 #. module: l10n_it_e-invoice
-#: model:ir.model,name:l10n_it_e-invoice.model_res_partner
-msgid "Partner"
-msgstr "Partner"
+#: help:account.journal,printing_module:0
+msgid "Printing module for e-invoice"
+msgstr "Modulo di stampa per le fatture elettroniche"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Notifica Decorrenza Termini"
+msgstr "Notifica Decorrenza Termini"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Notifica di Scarto Esito Cessionario Commitente"
+msgstr "Notifica di Scarto Esito Cessionario Commitente"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,nr_bollo:0
+msgid "Numero Bollo"
+msgstr "Numero Bollo"
+
+#. module: l10n_it_e-invoice
+#: sql_constraint:account.invoice:0
+msgid "Invoice Number must be unique per Company!"
+msgstr "Nell'azienda il numero fattura dev'essere univoco!"
+
+#. module: l10n_it_e-invoice
+#: field:res.company,e_invoice_ftp_password:0
+msgid "Password"
+msgstr "Password"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,einvoice_state:0
+msgid "E-Invoice State"
+msgstr "Stato Fattura Elettronica"
+
+#. module: l10n_it_e-invoice
+#: model:res.groups,name:l10n_it_e-invoice.e_invoice_manager
+msgid "E-Invoice Manager"
+msgstr "E-Invoice Manager"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Notifica Mancanza Consegna"
+msgstr "Notifica Mancanza Consegna"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,codice_cig:0
+msgid "Codice CIG"
+msgstr "Codice CIG"
 
 #. module: l10n_it_e-invoice
 #: field:res.partner,ipa_code:0
@@ -94,12 +309,42 @@ msgid "IPA Code"
 msgstr "IPA Code"
 
 #. module: l10n_it_e-invoice
-#: help:account.journal,e_invoice:0
-msgid "Check this box to determine that each entry of this journal will be managed with Italian protocol for Electronical Invoice. Please use the sequence like PA/xxxxxx"
-msgstr "Selezionare questo campo per indicare che questo sezionale sarà gestito secondo la normativa Italiana per la Fatturazione Elettronica verso la Pubblica Amministrazione. Utilizzare una sequence del tipo PA/xxxxxx"
-
-#. module: l10n_it_e-invoice
 #: sql_constraint:account.journal:0
 msgid "The code of the journal must be unique per company !"
 msgstr "Il codice del sezionale deve essere unico per una stessa azienda!"
+
+#. module: l10n_it_e-invoice
+#: view:res.company:0
+msgid "E-Invoice"
+msgstr "Fattura Elettronica"
+
+#. module: l10n_it_e-invoice
+#: view:wizard.send.invoice:0
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: l10n_it_e-invoice
+#: model:ir.model,name:l10n_it_e-invoice.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: l10n_it_e-invoice
+#: help:res.company,e_invoice_ftp_filepath:0
+msgid "/e-invoice/"
+msgstr "/e-invoice/"
+
+#. module: l10n_it_e-invoice
+#: field:account.invoice,history_ftpa:0
+msgid "Storico Trasmissione"
+msgstr "Storico Trasmissione"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Avvenuta Trasmissione"
+msgstr "Avvenuta Trasmissione"
+
+#. module: l10n_it_e-invoice
+#: selection:account.invoice,einvoice_state:0
+msgid "Ricevuta di Consegna"
+msgstr "Ricevuta di Consegna"
 

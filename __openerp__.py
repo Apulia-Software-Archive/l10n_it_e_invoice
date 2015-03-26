@@ -34,7 +34,7 @@ Modulo di gestione fatturazione elettronica""",
     "depends": ['account', ],
     "data": [
         'security/security.xml',
-        'security/ir.model.access.csv',
+        # 'security/ir.model.access.csv',
         'partner/partner_view.xml',
         'company/company_view.xml',
         'account/account_view.xml',

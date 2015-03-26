@@ -32,7 +32,7 @@
                             <newline/>
                             <field name="xml_content"/>
                         </form>
-                        <tree string="History Change">
+                        <tree string="History Change" colors="red: status_desc!=False">
                             <field name="date"/>
                             <field name="status_code"/>
                             <field name="status_desc"/>
