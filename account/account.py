@@ -298,6 +298,56 @@ firmata digitalmente della fattura XML PA in data \
         except:
             raise osv.except_osv('Error', 'Error to FTP')
 
+    def finalize_invoice_move_lines(self, cr, uid, invoice_browse, move_lines):
+        # manage of split_payment
+        super(account_invoice, self).finalize_invoice_move_lines(
+            cr, uid, invoice_browse, move_lines)
+        # modify some data in move lines
+        if (invoice_browse.type == 'out_invoice'
+                or invoice_browse.type == 'out_refund'):
+            journal = invoice_browse.journal_id
+            # ----- Check if fiscal positon is active for intra CEE invoice
+            if not journal:
+                return move_lines
+            if not journal.e_invoice:
+                return move_lines
+            amount_vat = invoice_browse.amount_tax
+            cli_account_id = invoice_browse.partner_id
+            cli_account_id = cli_account_id.property_account_receivable.id
+            new_line = {
+                'name': '/',
+                'debit': 0.0,
+                'partner_id': invoice_browse.partner_id.id,
+                'account_id': cli_account_id}
+            reconcile = self.pool[
+                'account.move.reconcile'].create(cr, uid, {'type': 'manual'})
+            if reconcile:
+                new_line.update({'reconcile_partial_id': reconcile})
+            if invoice_browse.type == 'out_invoice':
+                new_line.update({'credit': amount_vat})
+            if invoice_browse.type == 'out_refund':
+                new_line.update({'debit': amount_vat})
+            vat_line = {}
+            for line in move_lines:
+                if 'credit' in line[2] \
+                        and line[2]['credit'] == amount_vat:
+                    vat_line = {
+                        'name': 'IVA - Split Payment',
+                        'account_id': line[2]['account_id'],
+                    }
+                    if invoice_browse.type == 'out_invoice':
+                        vat_line.update({'debit': amount_vat})
+                    if invoice_browse.type == 'out_refund':
+                        vat_line.update({'credit': amount_vat})
+                    break
+            for line in move_lines:
+                if line[2]['account_id'] == cli_account_id:
+                    line[2].update({'reconcile_partial_id': reconcile})
+                    break
+            move_lines.append((0, 0, new_line))
+            move_lines.append((0, 0, vat_line))
+        return move_lines
+
 
 class account_journal(osv.osv):
     _inherit = "account.journal"
