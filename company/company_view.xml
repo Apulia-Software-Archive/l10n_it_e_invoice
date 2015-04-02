@@ -18,6 +18,7 @@
                 <field name="e_invoice_ftp_password" colspan="2"
                     attrs="{'required': [('e_invoice_ftp_path', '!=', False)]}"/>
                 <field name="e_invoice_ftp_filepath" colspan="2"/>
+                <field name="sending_type" />
                 </group>
             </page>
         </field>

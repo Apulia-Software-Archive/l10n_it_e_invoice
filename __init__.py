@@ -22,7 +22,6 @@
 ##############################################################################
 
 import company
-import partner
 import account
 import wizard
 import report

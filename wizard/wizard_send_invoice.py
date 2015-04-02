@@ -81,9 +81,9 @@ class wizard_send_invoice(osv.osv_memory):
     def send_invoice(self, cr, uid, ids, context=None):
         if context is None:
             context = {}
-        company_obj = self.pool.get('res.company')
+        company_obj = self.pool['res.company']
         ftp_vals = company_obj.get_ftp_vals(cr, uid, False, context)
-
+        company = self.pool['res.users'].browse(cr, uid, uid).company_id
         # ---- Setting the folder where put pdf file
         folder = 'input flusso PDF'
 
@@ -103,22 +103,42 @@ class wizard_send_invoice(osv.osv_memory):
                 _('Error!'),
                 _('invoice has already been processed, \
                    you can not proceed to send!'))
-
-        # ---- Standard for file name is:
-        # ---- ITpartita_iva_mittente<...>.pdf
         file_name = invoice.company_id.partner_id.vat
-        #~ file_name += '<' + invoice.number.replace('/', '_') + '>'
         file_name += invoice.number.replace('/', '_')
+        if company.sending_type == 'pdf':
+            # ---- Standard for file name is:
+            # ---- ITpartita_iva_mittente<...>.pdf
 
-        report = self.create_report(
-            cr, uid, invoice_ids, report_name, file_name, False, context)
-        report_file = report[0] and [report[1]] or []
-        if not report_file:
-            raise osv.except_osv(
-                _('Error'),
-                _('PDF is not ready!'))
-        self.upload_file(
-            cr, uid, ftp_vals, folder, report_file[0], context)
+            #~ file_name += '<' + invoice.number.replace('/', '_') + '>'
+
+
+            report = self.create_report(
+                cr, uid, invoice_ids, report_name, file_name, False, context)
+            report_file = report[0] and [report[1]] or []
+            if not report_file:
+                raise osv.except_osv(
+                    _('Error'),
+                    _('PDF is not ready!'))
+            self.upload_file(
+                cr, uid, ftp_vals, folder, report_file[0], context)
+        else:
+            # Now sending XML file
+            xml_create = self.pool['wizard.export.fatturapa'].exportFatturaPA(
+                cr, uid, ids, context={'active_ids': [invoice.id]})
+            attach_id = xml_create.get('res_id', False)
+            try:
+                data = self.pool['fatturapa.attachment.out'].browse(
+                    cr, uid, attach_id).ir_attachment_id.datas.decode('base64')
+                file = '/tmp/' + file_name + '.xml'
+                fp = open(file, 'wb+')
+                fp.write(data)
+                fp.close()
+            except Exception, e:
+                raise osv.except_osv(
+                    _('Error'),
+                    _('%s' %e))
+            self.upload_file(cr, uid, ftp_vals, folder, file, context)
+
         history = invoice.history_ftpa or ''
         history = '%s\n' % (history)
         history = "%sFattura inviata in data %s" % (

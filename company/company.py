@@ -39,7 +39,12 @@ class res_company(osv.osv):
         'e_invoice_ftp_filepath': fields.char('FTP File path for e-invoice',
                                               size=128,
                                               help='/e-invoice/'),
+        'sending_type': fields.selection(
+            [('xml', 'XML'),
+             ('pdf', 'PDF')], 'Sending Type'),
         }
+
+    _defaults = {'sending_type': 'xml'}
 
     def get_ftp_vals(self, cr, uid, company_id=False, context=None):
         # ----- If there isn't a company as parameter
