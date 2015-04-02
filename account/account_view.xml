@@ -5,39 +5,37 @@
     <record id="view_e-invoice_form" model="ir.ui.view">
         <field name="name">view.e-invoice.form</field>
         <field name="model">account.invoice</field>
-        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="inherit_id" ref="l10n_it_fatturapa_out.view_invoice_form_fatturapa"/>
         <field name="arch" type="xml">
-            <notebook position="inside">
-                <page string="Electronic Invoice">
-                    <group colspan="4">
-                    <field name="history_ftpa" readonly="1"/>
-                    <field name="sdi_file_name" colspan="4" readonly="1"/>
-                    <field name="einvoice_state" invisible="1"/>
-                    </group>
-                    <button name="force_check_einvoice_status" string="Force Status Check" type="object"/>
-                    <group colspan="4">
-                    <field name="history_change"
-                        nolabel="1" readonly="1">
-                        <form string="History Change">
-                            <field name="date"/>
-                            <field name="status_code"/>
-                            <newline/>
-                            <field name="status_desc"/>
-                            <newline/>
-                            <field name="note"/>
-                            <newline/>
-                            <field name="xml_content"/>
-                        </form>
-                        <tree string="History Change" colors="red: status_desc!=False">
-                            <field name="date"/>
-                            <field name="status_code"/>
-                            <field name="status_desc"/>
-                            <field name="note"/>
-                        </tree>
-                    </field>
-                    </group>
-                </page>
-            </notebook>
+            <field name="fatturapa_attachment_out_id" position="after">
+                <group colspan="4">
+                <field name="history_ftpa" readonly="1"/>
+                <field name="sdi_file_name" colspan="4" readonly="1"/>
+                <field name="einvoice_state" invisible="1"/>
+                </group>
+                <button name="force_check_einvoice_status" string="Force Status Check" type="object"/>
+                <group colspan="4">
+                <field name="history_change"
+                    nolabel="1" readonly="1">
+                    <form string="History Change">
+                        <field name="date"/>
+                        <field name="status_code"/>
+                        <newline/>
+                        <field name="status_desc"/>
+                        <newline/>
+                        <field name="note"/>
+                        <newline/>
+                        <field name="xml_content"/>
+                    </form>
+                    <tree string="History Change" colors="red: status_desc!=False">
+                        <field name="date"/>
+                        <field name="status_code"/>
+                        <field name="status_desc"/>
+                        <field name="note"/>
+                    </tree>
+                </field>
+                </group>
+            </field>
         </field>
     </record>
 

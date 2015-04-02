@@ -38,10 +38,6 @@ class account_invoice(osv.osv):
     _inherit = "account.invoice"
 
     _columns = {
-        # 'nr_bollo': fields.char('Numero Bollo', size=10),
-        # 'codice_commessa': fields.char('Codice Commessa', size=64),
-        # 'codice_cup': fields.char('Codice CUP', size=64),
-        # 'codice_cig': fields.char('Codice CIG', size=64),
         'history_ftpa': fields.text('Storico Trasmissione'),
         'sdi_file_name': fields.char('Sdi File Name', size=128),
         'einvoice_state': fields.selection(
