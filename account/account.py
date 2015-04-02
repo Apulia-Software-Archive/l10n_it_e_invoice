@@ -29,6 +29,7 @@ import logging
 import base64
 from datetime import datetime
 from xml.dom.minidom import parse
+from openerp import tools
 
 _logger = logging.getLogger('Sending E-Invoice')
 
@@ -61,6 +62,14 @@ class account_invoice(osv.osv):
     _defaults = {
         'einvoice_state': 'draft',
         }
+
+    def copy(self, cr, uid, id, default=None, context=None):
+        if not default:
+            default = {}
+        default = dict(default, history_change=[], einvoice_state='draft',
+                       history_ftpa='', sdi_file_name='')
+        return super(account_invoice, self).copy(
+            cr, uid, id, default=default, context=context)
 
     def create(self, cr, uid, vals, context=None):
         if not vals:
@@ -114,25 +123,36 @@ class account_invoice(osv.osv):
                     note = "Codice di Errore SDI: " + value.data
                     vals.update({
                         'note': note})
+            if vals.get('status_desc', False):
+                invoice = self.browse(cr, uid, invoice_id, context)
+                tools.email_send(
+                    invoice.company_id.email,
+                    [invoice.company_id.email],
+                    'Controllo Fatture Elettroniche',
+                    'Fattura: %s - Messaggio %s' %(invoice.internal_number,
+                                                   vals.get('status_desc')),
+                    subtype='plain',
+                    cr=cr)
         return vals
 
     def check_output_xml_pa(self, cr, uid, ftp, ftp_vals, company_vat,
                             context=None):
         # ----- Open the remote folder and read all the files
         folder = 'output XML-PA'
-        ir_attachment = self.pool.get('ir.attachment')
+        ir_attachment = self.pool['ir.attachment']
         ftp.cwd('%s%s' % (ftp_vals[4], folder))
         file_list = []
         ftp.retrlines('LIST', file_list.append)
         for filename in file_list:
-            filename = filename.split(None, 8)[-1]
             if not filename:
                 _logger.info('No file found')
                 continue
-            if not filename.startswith(company_vat):
+            tmp_filename = filename.split('#')[-1]
+            if not tmp_filename.startswith(company_vat):
                 continue
             # ----- Extracts invoice number from file name
-            invoice_number = filename[13:].replace('_', '/')
+            invoice_number = tmp_filename.split('.')[0].replace(
+                company_vat, '').replace('_', '/')
             # ----- Search the invoice
             invoice_ids = self.search(
                 cr, uid, [('number', '=', invoice_number)])
@@ -146,6 +166,7 @@ class account_invoice(osv.osv):
                 continue
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
+            filename = filename.split(None, 8)[-1]
             ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
             lf.close()
             attachment_data = {
@@ -200,7 +221,7 @@ firmata digitalmente della fattura XML PA in data \
             ftp.rename(
                 filename, ftp_vals[4] + '/elaborati/' + filename)
             # ----- Write historic change
-            self.pool.get('einvoice.history').create(cr, uid, vals, context)
+            self.pool['einvoice.history'].create(cr, uid, vals, context)
         return True
 
     def check_xml_state_file(self, cr, uid, ftp, ftp_vals, company_vat,
@@ -212,21 +233,38 @@ firmata digitalmente della fattura XML PA in data \
         ftp.retrlines('LIST', file_list.append)
         for filename in file_list:
             filename = filename.split(None, 8)[-1]
-            _logger.info('File to elaborate %s' % (filename))
             if not filename:
                 _logger.info('No file found')
                 continue
             if not filename.startswith(company_vat):
+                codice = filename.split('_')
+                if not codice[1]:
+                    continue
+                stringa = '%s%s%s' %('%', codice[1], '%')
+                invoice_ids = self.search(
+                    cr, uid,
+                    [('sdi_file_name', 'ilike', stringa)])
+                if invoice_ids:
+                    local_filename = os.path.join(r"/tmp/", filename)
+                    lf = open(local_filename, "wb")
+                    ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
+                    lf.close()
+                    vals = self.read_xml_file(
+                        cr, uid, local_filename, invoice_ids[0], context)
+                    # ----- Move file in backup folder
+                    ftp.rename(
+                        filename, ftp_vals[4] + '/elaborati/' + filename)
+                    # ----- Write historic change
+                    self.pool['einvoice.history'].create(
+                        cr, uid, vals, context)
                 continue
-            invoice_number = filename[13:22].replace('_', '/')
+            invoice_number = filename.split('.')[0][13:].replace('_', '/')
             # ----- Search the invoice
-            _logger.info('Search the invoice %s' % (invoice_number))
             invoice_ids = self.search(
                 cr, uid, [('number', '=', invoice_number)])
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     invoice_number))
-                continue
             # ----- Extract datas from XML file
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
@@ -238,7 +276,7 @@ firmata digitalmente della fattura XML PA in data \
             ftp.rename(
                 filename, ftp_vals[4] + '/elaborati/' + filename)
             # ----- Write historic change
-            self.pool.get('einvoice.history').create(cr, uid, vals, context)
+            self.pool['einvoice.history'].create(cr, uid, vals, context)
         return True
 
     def force_check_einvoice_status(self, cr, uid, ids, context=None):
@@ -297,3 +335,5 @@ class einvoice_history(osv.osv):
         'status_desc': fields.text('Status Desc'),
         'xml_content': fields.text('XML File Content'),
     }
+
+    _order = 'date'

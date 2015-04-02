@@ -9,12 +9,6 @@
         <field name="arch" type="xml">
             <notebook position="inside">
                 <page string="Electronic Invoice">
-                    <group>
-                    <field name="nr_bollo" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
-                    <field name="codice_commessa" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
-                    <field name="codice_cup" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
-                    <field name="codice_cig" attrs="{'readonly': [('einvoice_state', 'not in', ('draft', 'sent'))]}"/>
-                    </group>
                     <group colspan="4">
                     <field name="history_ftpa" readonly="1"/>
                     <field name="sdi_file_name" colspan="4" readonly="1"/>
@@ -34,7 +28,7 @@
                             <newline/>
                             <field name="xml_content"/>
                         </form>
-                        <tree string="History Change">
+                        <tree string="History Change" colors="red: status_desc!=False">
                             <field name="date"/>
                             <field name="status_code"/>
                             <field name="status_desc"/>

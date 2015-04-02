@@ -26,8 +26,8 @@ Contributors
 Maintainer
 ----------
 
-.. image:: http://apuliasoftware.it/website/image?field=datas&model=ir.attachment&id=16
+.. image:: http://i.imgur.com/AfppRsj.png
    :alt: Apulia Software Srl
    :target: http://www.apuliasoftware.it
 
-* ApuliaSoftware S.r.l. <info@apuliasoftare.ir>
+* ApuliaSoftware S.r.l. <info@apuliasoftare.it>
