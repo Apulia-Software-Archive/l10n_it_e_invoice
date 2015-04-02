@@ -1,10 +1,33 @@
-l10n_it_e-invoice
+l10n_it_e_invoice
 =================
 
-Fatturazione Elettronica per Openerp
+This module allow to manage the Eletroinc Invoice introduced with art. 21, 
+comma 1, of law DPR 633/72
 
-Questo modulo funzione esclusivamente sottoscrivendo un contratto con il provider
-di servizi di Fatturazione Elettronica Esterno
+Usage
+=====
 
-per info e adesioni
-info@apuliasoftware.it
+To use this module, you need to:
+
+ * subscribe a contract with external provider to manage sending and archive e-invoice to SDI
+
+For further information, please visit:
+
+ * https://www.apuliasoftware.it
+
+
+Contributors
+------------
+
+* Andrea Gallina <a.gallina@apuliasoftware.it>
+* Francesco Apruzzese <f.apruzzese@apuliasoftware.it>
+* Andrea Cometa <a.cometa@apuliasoftware.it>
+
+Maintainer
+----------
+
+.. image:: http://apuliasoftware.it/website/image?field=datas&model=ir.attachment&id=16
+   :alt: Apulia Software Srl
+   :target: http://www.apuliasoftware.it
+
+* ApuliaSoftware S.r.l. <info@apuliasoftare.ir>
