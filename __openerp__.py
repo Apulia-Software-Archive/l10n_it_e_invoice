@@ -28,7 +28,11 @@
     'author': 'Apulia Software srl <info@apuliasoftware.it>',
     'website': 'www.apuliasoftware.it',
     'license': 'AGPL-3',
-    "depends": ['account', 'l10n_it_fatturapa'],
+    "depends": [
+        'account',
+        'l10n_it_fatturapa',
+        'l10n_it_fatturapa',
+        ],
     "data": [
         'security/security.xml',
         'security/ir.model.access.csv',
