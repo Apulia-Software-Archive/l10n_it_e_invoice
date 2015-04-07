@@ -31,7 +31,7 @@
     "depends": [
         'account',
         'l10n_it_fatturapa',
-        'l10n_it_fatturapa',
+        'l10n_it_fatturapa_out',
         ],
     "data": [
         'security/security.xml',
