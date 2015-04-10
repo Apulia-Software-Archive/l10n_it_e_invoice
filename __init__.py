@@ -21,7 +21,7 @@
 #
 ##############################################################################
 
-import company
-import account
-import wizard
-import report
+from . import company
+from . import account
+from . import wizard
+from . import report

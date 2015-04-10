@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="extend_ipa_code_partner_contact" model="ir.ui.view">
+        <field name="name">extend.ipa.code.partner.contact</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="l10n_it_ipa.view_partner_ipa_form"/>
+        <field name="arch" type="xml">
+            <field name="ipa_code" position="replace">
+                <field name="ipa_code" placeholder="IPA123" />
+            </field>
+        </field>
+    </record>
+
+    <record id="extend_partner_contact_ipa_code" model="ir.ui.view">
+        <field name="name">extend.partner.contact.ipa.code</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form/sheet/notebook/page[@string='Contacts']/field[@name='child_ids']/form/sheet/group/field[@name='mobile']" position="after">
+                <field name="ipa_code" placeholder="IPA123" />
+            </xpath>
+        </field>
+    </record>
+
+</data>
+</openerp>
