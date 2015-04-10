@@ -59,6 +59,27 @@ class account_invoice(osv.osv):
         'einvoice_state': 'draft',
         }
 
+    def onchange_partner_id(self, cr, uid, ids, type, partner_id,
+                            date_invoice=False, payment_term=False,
+                            partner_bank_id=False, company_id=False):
+        res = super(account_invoice, self).onchange_partner_id(
+            cr, uid, ids, type, partner_id, date_invoice, payment_term,
+            partner_bank_id, company_id
+        )
+        if not res or not partner_id:
+            return res
+        if not type in ('out_invoice', 'out_refund'):
+            return res
+        partner = self.pool['res.partner'].browse(cr, uid, partner_id)
+        if not partner.ipa_code:
+            return res
+        pa_journal = self.pool['account.journal'].search(
+            cr, uid, [('e_invoice', '=', True)])
+        if not pa_journal:
+            return res
+        res['value'].update({'journal_id': pa_journal[0]})
+        return res
+
     def copy(self, cr, uid, id, default=None, context=None):
         if not default:
             default = {}
