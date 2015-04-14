@@ -192,12 +192,12 @@ class account_invoice(osv.osv):
             ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
             lf.close()
             attachment_data = {
-                'name': filename,
+                'name': '%s.xml.p7m' %invoice.internal_number,
                 'type': 'binary',
-                'datas_fname': filename,
+                'datas_fname': '%s.xml.p7m' %invoice.internal_number,
                 'datas': base64.encodestring(
                     open(local_filename, "rb").read()),
-                'res_name': filename,
+                'res_name': '%s.xml.p7m' %invoice.internal_number,
                 'res_model': 'account.invoice',
                 'res_id': invoice_ids[0],
                 }
