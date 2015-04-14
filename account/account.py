@@ -95,8 +95,6 @@ class account_invoice(osv.osv):
         vals = {}
         file_data = open(local_filename, "rb").read()
         vals.update({'name': invoice_id, 'xml_content': file_data})
-        if '41BYX' in local_filename:
-            import pdb;pdb.set_trace()
         for tags in parser.getElementsByTagName("esito"):
             for node in tags.getElementsByTagName("timestamp"):
                 for value in node.childNodes:
@@ -139,19 +137,21 @@ class account_invoice(osv.osv):
                         'Codice')[0].firstChild.data
                     errori = '%s: %s\n%s' %(
                         codice, descrizione, errori)
+            if errori:
+                vals.update({'status_desc': errori})
 
         if not 'date' in vals:
             vals.update({'date': datetime.now().strftime('%Y-%m-%d')})
-            if vals.get('status_desc', False):
-                invoice = self.browse(cr, uid, invoice_id, context)
-                tools.email_send(
-                    invoice.company_id.email,
-                    [invoice.company_id.email],
-                    'Controllo Fatture Elettroniche',
-                    'Fattura: %s - Messaggio %s' %(invoice.internal_number,
-                                                   vals.get('status_desc')),
-                    subtype='plain',
-                    cr=cr)
+
+        invoice = self.browse(cr, uid, invoice_id, context)
+        tools.email_send(
+            invoice.company_id.email,
+            [invoice.company_id.email],
+            'Controllo Fatture Elettroniche',
+            'Fattura: %s - Messaggio %s' %(invoice.internal_number,
+                                           vals.get('status_desc', '')),
+            subtype='plain',
+            cr=cr)
 
         return vals
 
