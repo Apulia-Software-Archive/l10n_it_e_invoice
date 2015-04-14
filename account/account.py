@@ -130,6 +130,8 @@ class account_invoice(osv.osv):
         for tags in parser.getElementsByTagName('ListaErrori'):
             for node in tags.getElementsByTagName('Errore'):
                 import pdb;pdb.set_trace()
+        if not 'date' in vals:
+            vals.update({'date': datetime.now().strftime('%Y-%m-%d')})
             if vals.get('status_desc', False):
                 invoice = self.browse(cr, uid, invoice_id, context)
                 tools.email_send(
