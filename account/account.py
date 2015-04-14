@@ -137,19 +137,41 @@ class account_invoice(osv.osv):
                         {'sdi_file_name': value.data}, context)
             for node in tags.getElementsByTagName("codStato"):
                 for value in node.childNodes:
-                    note = "Codice di Errore SDI: " + value.data
+                    note = "Codice SDI: " + value.data
                     vals.update({
                         'note': note})
-            if vals.get('status_desc', False):
-                invoice = self.browse(cr, uid, invoice_id, context)
-                tools.email_send(
-                    invoice.company_id.email,
-                    [invoice.company_id.email],
-                    'Controllo Fatture Elettroniche',
-                    'Fattura: %s - Messaggio %s' %(invoice.internal_number,
-                                                   vals.get('status_desc')),
-                    subtype='plain',
-                    cr=cr)
+        for tags in parser.getElementsByTagName('DataOraRicezione'):
+            for node in tags.childNodes:
+                vals.update({'date': node.data[:19].replace('T', ' ')})
+        for tags in parser.getElementsByTagName('ListaErrori'):
+            errori = ""
+            for node in tags.getElementsByTagName('Errore'):
+                descrizione = 'N/A'
+                if node.getElementsByTagName('Descrizione'):
+                    descrizione = node.getElementsByTagName(
+                        'Descrizione')[0].firstChild.data
+                if node.getElementsByTagName('Codice'):
+                    codice = node.getElementsByTagName(
+                        'Codice')[0].firstChild.data
+                    errori = '%s: %s\n%s' %(
+                        codice, descrizione, errori)
+            if errori:
+                vals.update({'status_desc': errori,
+                             'status_code': 'ERRORE!'})
+
+        if not 'date' in vals:
+            vals.update({'date': datetime.now().strftime('%Y-%m-%d')})
+
+        invoice = self.browse(cr, uid, invoice_id, context)
+        tools.email_send(
+            invoice.company_id.email,
+            [invoice.company_id.email],
+            'Controllo Fatture Elettroniche',
+            'Fattura: %s - Messaggio %s' %(invoice.internal_number,
+                                           vals.get('status_desc', '')),
+            subtype='plain',
+            cr=cr)
+
         return vals
 
     def check_output_xml_pa(self, cr, uid, ftp, ftp_vals, company_vat,
@@ -176,6 +198,7 @@ class account_invoice(osv.osv):
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     invoice_number))
+                continue
             # ----- Create an attachment
             invoice = self.browse(cr, uid, invoice_ids[0], context)
             if invoice.einvoice_state == 'at':
@@ -187,12 +210,12 @@ class account_invoice(osv.osv):
             ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
             lf.close()
             attachment_data = {
-                'name': filename,
+                'name': '%s.xml.p7m' %invoice.internal_number,
                 'type': 'binary',
-                'datas_fname': filename,
+                'datas_fname': '%s.xml.p7m' %invoice.internal_number,
                 'datas': base64.encodestring(
                     open(local_filename, "rb").read()),
-                'res_name': filename,
+                'res_name': '%s.xml.p7m' %invoice.internal_number,
                 'res_model': 'account.invoice',
                 'res_id': invoice_ids[0],
                 }
@@ -227,6 +250,7 @@ firmata digitalmente della fattura XML PA in data \
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     filename_value[1]))
+                continue
             # ----- Extract datas from XML file
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
@@ -282,6 +306,7 @@ firmata digitalmente della fattura XML PA in data \
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     invoice_number))
+                continue
             # ----- Extract datas from XML file
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
