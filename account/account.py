@@ -124,7 +124,7 @@ class account_invoice(osv.osv):
                         'note': note})
         for tags in parser.getElementsByTagName('DataOraRicezione'):
             for node in tags.childNodes:
-                vals.update({'date': node.data[:10]})
+                vals.update({'date': node.data[:19].replace('T', ' ')})
         for tags in parser.getElementsByTagName('ListaErrori'):
             errori = ""
             for node in tags.getElementsByTagName('Errore'):
