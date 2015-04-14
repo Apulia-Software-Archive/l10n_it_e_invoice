@@ -179,6 +179,7 @@ class account_invoice(osv.osv):
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     invoice_number))
+                continue
             # ----- Create an attachment
             invoice = self.browse(cr, uid, invoice_ids[0], context)
             if invoice.einvoice_state == 'at':
@@ -284,6 +285,7 @@ firmata digitalmente della fattura XML PA in data \
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     invoice_number))
+                continue
             # ----- Extract datas from XML file
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
