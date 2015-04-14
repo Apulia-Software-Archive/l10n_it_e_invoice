@@ -95,6 +95,8 @@ class account_invoice(osv.osv):
         vals = {}
         file_data = open(local_filename, "rb").read()
         vals.update({'name': invoice_id, 'xml_content': file_data})
+        if '41BYX' in local_filename:
+            import pdb;pdb.set_trace()
         for tags in parser.getElementsByTagName("esito"):
             for node in tags.getElementsByTagName("timestamp"):
                 for value in node.childNodes:
@@ -122,6 +124,12 @@ class account_invoice(osv.osv):
                     note = "Codice SDI: " + value.data
                     vals.update({
                         'note': note})
+        for tags in parser.getElementsByTagName('DataOraRicezione'):
+            for node in tags.childNodes:
+                vals.update({'date': node.data[:10]})
+        for tags in parser.getElementsByTagName('ListaErrori'):
+            for node in tags.getElementsByTagName('Errore'):
+                import pdb;pdb.set_trace()
             if vals.get('status_desc', False):
                 invoice = self.browse(cr, uid, invoice_id, context)
                 tools.email_send(
@@ -201,12 +209,10 @@ firmata digitalmente della fattura XML PA in data \
             if not filename:
                 _logger.info('No file found')
                 continue
-            if not filename.startswith(company_vat):
-                continue
             filename_value = filename.split('_')
             # ----- Search the invoice
             invoice_ids = self.search(
-                cr, uid, [('sdi_file_name', '=', filename_value[1])])
+                cr, uid, [('sdi_file_name', 'ilike', filename_value[1])])
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     filename_value[1]))
