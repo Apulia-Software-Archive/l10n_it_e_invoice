@@ -128,8 +128,18 @@ class account_invoice(osv.osv):
             for node in tags.childNodes:
                 vals.update({'date': node.data[:10]})
         for tags in parser.getElementsByTagName('ListaErrori'):
+            errori = ""
             for node in tags.getElementsByTagName('Errore'):
-                import pdb;pdb.set_trace()
+                descrizione = 'N/A'
+                if node.getElementsByTagName('Descrizione'):
+                    descrizione = node.getElementsByTagName(
+                        'Descrizione')[0].firstChild.data
+                if node.getElementsByTagName('Codice'):
+                    codice = node.getElementsByTagName(
+                        'Codice')[0].firstChild.data
+                    errori = '%s: %s\n%s' %(
+                        codice, descrizione, errori)
+
         if not 'date' in vals:
             vals.update({'date': datetime.now().strftime('%Y-%m-%d')})
             if vals.get('status_desc', False):
