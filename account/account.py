@@ -138,7 +138,8 @@ class account_invoice(osv.osv):
                     errori = '%s: %s\n%s' %(
                         codice, descrizione, errori)
             if errori:
-                vals.update({'status_desc': errori})
+                vals.update({'status_desc': errori,
+                             'status_code': 'ERRORE!'})
 
         if not 'date' in vals:
             vals.update({'date': datetime.now().strftime('%Y-%m-%d')})
