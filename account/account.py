@@ -216,6 +216,7 @@ firmata digitalmente della fattura XML PA in data \
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     filename_value[1]))
+                continue
             # ----- Extract datas from XML file
             local_filename = os.path.join(r"/tmp/", filename)
             lf = open(local_filename, "wb")
