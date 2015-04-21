@@ -21,53 +21,49 @@
 #
 ##############################################################################
 
-from openerp.osv import osv, fields
-from openerp.tools.translate import _
+from openerp import models, fields, api, _
+from openerp.exceptions import Warning
+
 import logging
 _logger = logging.getLogger('E-Invoice - Company')
 
 
-class res_company(osv.osv):
+class ResCompany(models.Model):
 
     _inherit = "res.company"
 
-    _columns = {
-        'e_invoice_ftp_path': fields.char('FTP path for e-invoice', size=128),
-        'e_invoice_ftp_port': fields.char('FTP port for e-invoice', size=8),
-        'e_invoice_ftp_username': fields.char('Username', size=64),
-        'e_invoice_ftp_password': fields.char('Password', size=64),
-        'e_invoice_ftp_filepath': fields.char('FTP File path for e-invoice',
-                                              size=128,
-                                              help='/e-invoice/'),
-        'sending_type': fields.selection(
-            [('xml', 'XML'),
-             ('pdf', 'PDF')], 'Sending Type'),
-        }
+    e_invoice_ftp_path = fields.Char(string='FTP path for e-invoice')
+    e_invoice_ftp_port = fields.Char(string='FTP port for e-invoice')
+    e_invoice_ftp_username = fields.Char(string='Username')
+    e_invoice_ftp_password = fields.Char(string='Password')
+    e_invoice_ftp_filepath = fields.Char(string='FTP File path for e-invoice',
+                                         help="/e-invoice/")
+    sending_type = fields.Selection([('xml', 'XML'), ('pdf', 'PDF')],
+                                    default='xml',
+                                    string='Sending Type')
 
-    _defaults = {'sending_type': 'xml'}
-
-    def get_ftp_vals(self, cr, uid, company_id=False, context=None):
+    @api.model
+    def get_ftp_vals(self, company_id=False):
         # ----- If there isn't a company as parameter
         #       extracts it from user
         if not company_id:
-            company_id = self.pool.get('res.users').browse(
-                cr, uid, uid, context).company_id.id
-        company = self.browse(cr, uid, company_id, context)
+            company_id = self.env.user.company_id.id
+        company = self.browse(company_id)
         if not company.e_invoice_ftp_path:
-            raise osv.except_osv(
-                _('Error'),
-                _('Define an FTP path for this company'))
+            raise Warning(_('Define an FTP path for this company'))
         return (company.e_invoice_ftp_path,
                 company.e_invoice_ftp_port or '21',
                 company.e_invoice_ftp_username,
                 company.e_invoice_ftp_password,
                 company.e_invoice_ftp_filepath or '')
 
-    def get_vat(self, cr, uid, company_id=False, context=None):
+    @api.model
+    def get_vat(self, company_id=False):
+        # ----- If there isn't a company as parameter
+        #       extracts it from user
         if not company_id:
-            company_id = self.pool.get('res.users').browse(
-                cr, uid, uid, context).company_id.id
-        company = self.browse(cr, uid, company_id, context)
+            company_id = self.env.user.company_id.id
+        company = self.browse(company_id)
         if not company.vat:
             _logger.info('No VAT for company %s' % (company.name))
-        return company.vat or '!'
+        return company.vat or ''

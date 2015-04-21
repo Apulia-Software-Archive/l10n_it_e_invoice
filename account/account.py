@@ -63,10 +63,11 @@ class AccountInvoice(models.Model):
                             payment_term=False, partner_bank_id=False,
                             company_id=False):
         res = super(AccountInvoice, self).onchange_partner_id(
-            type, partner_id, date_invoice, payment_term, partner_bank_id, company_id)
+            type, partner_id, date_invoice, payment_term, partner_bank_id,
+            company_id)
         if not res or not partner_id:
             return res
-        if not type in ('out_invoice', 'out_refund'):
+        if type not in ('out_invoice', 'out_refund'):
             return res
         partner = self.env['res.partner'].browse(partner_id)
         if not partner.ipa_code:
@@ -145,7 +146,7 @@ class AccountInvoice(models.Model):
                 vals.update({'status_desc': errori,
                              'status_code': 'ERRORE!'})
 
-        if not 'date' in vals:
+        if 'date' not in vals:
             vals.update({'date': datetime.now().strftime('%Y-%m-%d')})
 
         tools.email_send(
