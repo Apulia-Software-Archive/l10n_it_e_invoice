@@ -39,7 +39,7 @@
         'security/ir.model.access.csv',
         'company/company_view.xml',
         'account/account_view.xml',
-        # 'report/account_report.xml',
+        'report/account_report.xml',
         'account/e-invoice_data.xml',
         'wizard/send_invoice_view.xml',
         'l10n_it_ipa/partner_view.xml',
