@@ -167,8 +167,8 @@ class account_invoice(osv.osv):
             invoice.company_id.email,
             [invoice.company_id.email],
             'Controllo Fatture Elettroniche',
-            'Fattura: %s - Messaggio %s' %(invoice.internal_number,
-                                           vals.get('status_desc', '')),
+            'Fattura: %s - Messaggio %s' % (invoice.internal_number,
+                                            vals.get('status_desc', '')),
             subtype='plain',
             cr=cr)
 
