@@ -155,8 +155,7 @@ class AccountInvoice(models.Model):
             'Controllo Fatture Elettroniche',
             'Fattura: %s - Messaggio %s' % (invoice.internal_number,
                                             vals.get('status_desc', '')),
-            subtype='plain',
-            cr=cr)
+            subtype='plain')
 
         return vals
 
