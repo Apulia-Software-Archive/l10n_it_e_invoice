@@ -37,9 +37,8 @@ class WizardSendInvoice(models.TransientModel):
     _name = "wizard.send.invoice"
     _description = "Wizard For Sending E-Invoice"
 
-    def create_report(self, cr, uid, res_ids,
-                      report_name=False, file_name=False,
-                      data=False, context=False):
+    def create_report(self, res_ids, report_name=False, file_name=False,
+                      data=False):
         if not report_name or not res_ids:
             return (
                 False,
@@ -56,7 +55,7 @@ class WizardSendInvoice(models.TransientModel):
             return (False, str(e))
         return (True, ret_file_name)
 
-    def upload_file(self, cr, uid, ftp_vals, folder, file_name, context):
+    def upload_file(self, ftp_vals, folder, file_name):
         try:
             ftp = FTP()
             ftp.connect(ftp_vals[0], int(ftp_vals[1]))
@@ -76,71 +75,64 @@ class WizardSendInvoice(models.TransientModel):
                 _logger.info('Close FTP Connection')
                 ftp.quit()
         except:
-            raise osv.except_osv('Error', 'Error to FTP')
+            raise Warning(_('Error to FTP'))
 
     @api.multi
     def send_invoice(self):
+        invoice_ids = self.env.context.get('active_ids', [])
+        if not invoice_ids:
+            raise Warning('No invoices to send')
         company_model = self.env['res.company']
         ftp_vals = company_model.get_ftp_vals()
-        print '===================', ftp_vals
         company = self.env.user.company_id
-        print '===================', company
         # ---- Setting the folder where put pdf file
         folder = 'input flusso PDF'
-        #import pdb;pdb.set_trace()
-        # company_obj = self.pool['res.company']
-        # ftp_vals = company_obj.get_ftp_vals(cr, uid, False, context)
-        # company = self.pool['res.users'].browse(cr, uid, uid).company_id
-        # # ---- Setting the folder where put pdf file
-        # folder = 'input flusso PDF'
-        #
-        # # ---- Select the printing module to print and create PDF
-        # invoice_ids = context.get('active_ids', [])
-        # invoice_obj = self.pool.get('account.invoice')
-        # invoice = invoice_obj.browse(cr, uid, invoice_ids, context)[0]
-        # report_name = invoice.journal_id.printing_module.report_name or False
-        #
-        # # ---- check if invoice can be send to SDI
-        # if not invoice.journal_id.e_invoice:
-        #     raise osv.except_osv(
-        #         _('Error'),
-        #         _('Is not E-Invoice check your Journal config!'))
-        # if invoice.einvoice_state not in ('draft', 'sent'):
-        #     raise osv.except_osv(
-        #         _('Error!'),
-        #         _('invoice has already been processed, \
-        #            you can not proceed to send!'))
-        # file_name = invoice.company_id.partner_id.vat
-        # file_name += invoice.number.replace('/', '_')
-        # if company.sending_type == 'pdf':
-        #     # ---- Standard for file name is:
-        #     # ---- ITpartita_iva_mittente<...>.pdf
-        #     report = self.create_report(
-        #         cr, uid, invoice_ids, report_name, file_name, False, context)
-        #     report_file = report[0] and [report[1]] or []
-        #     if not report_file:
-        #         raise osv.except_osv(
-        #             _('Error'),
-        #             _('PDF is not ready!'))
-        #     self.upload_file(
-        #         cr, uid, ftp_vals, folder, report_file[0], context)
-        # else:
-        #     # Now sending XML file
-        #     xml_create = self.pool['wizard.export.fatturapa'].exportFatturaPA(
-        #         cr, uid, ids, context={'active_ids': [invoice.id]})
-        #     attach_id = xml_create.get('res_id', False)
-        #     try:
-        #         data = self.pool['fatturapa.attachment.out'].browse(
-        #             cr, uid, attach_id).ir_attachment_id.datas.decode('base64')
-        #         file = '/tmp/' + file_name + '.xml'
-        #         fp = open(file, 'wb+')
-        #         fp.write(data)
-        #         fp.close()
-        #     except Exception, e:
-        #         raise osv.except_osv(
-        #             _('Error'),
-        #             _('%s' %e))
-        #     self.upload_file(cr, uid, ftp_vals, folder, file, context)
+        invoice_model = self.env['account.invoice']
+        invoices = invoice_model.browse(invoice_ids)
+        e_invoice_type = company.sending_type
+        for invoice in invoices:
+            if invoice.state in ('draft', 'sent'):
+                raise Warning(
+                    _('Invoice must be validated'))
+            # ---- check if invoice can be send to SDI
+            if not invoice.journal_id.e_invoice:
+                raise Warning(
+                    _('Is not E-Invoice check your Journal config!'))
+            # ---- check if invoice can be send on FTP
+            if invoice.einvoice_state not in ('draft', 'sent'):
+                raise Warning(
+                    _('Invoice has already been processed, \
+                       you can not proceed to send!'))
+            report_name = (invoice.journal_id.printing_module.report_name or
+                           False)
+            print '=================== REPORT NAME', report_name
+            file_name = invoice.company_id.partner_id.vat
+            file_name = '%s%s' % (file_name, invoice.number.replace('/', '_'))
+            if e_invoice_type == 'pdf':
+                # ---- Standard for file name is:
+                # ---- ITpartita_iva_mittente<...>.pdf
+                report = self.create_report(invoice_ids, report_name,
+                                            file_name, False)
+                report_file = report[0] and [report[1]] or []
+                if not report_file:
+                    raise Warning(
+                        _('PDF is not ready!'))
+                self.upload_file(ftp_vals, folder, report_file[0])
+            else:
+                # Send XML file
+                xml_create = self.env['wizard.export.fatturapa'].with_context(
+                    active_ids=[invoice.id, ]).exportFatturaPA()
+                attach_id = xml_create.get('res_id', False)
+                try:
+                    data = self.env['fatturapa.attachment.out'].browse(
+                        attach_id).ir_attachment_id.datas.decode('base64')
+                    file = '/tmp/%s.xml' % file_name
+                    fp = open(file, 'wb+')
+                    fp.write(data)
+                    fp.close()
+                except Exception, e:
+                    raise Warning(_('%s' % e))
+                self.upload_file(ftp_vals, folder, file)
         #
         # history = invoice.history_ftpa or ''
         # history = '%s\n' % (history)
