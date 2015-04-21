@@ -35,8 +35,8 @@
         'l10n_it_ipa',
         ],
     "data": [
-        # 'security/security.xml',
-        # 'security/ir.model.access.csv',
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'company/company_view.xml',
         'account/account_view.xml',
         # 'report/account_report.xml',
