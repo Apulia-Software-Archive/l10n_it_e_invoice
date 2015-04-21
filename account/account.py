@@ -87,7 +87,7 @@ class AccountInvoice(models.Model):
         partner_id = vals.get('partner_id', False)
         if journal_id and partner_id and self.env['account.journal'].browse(
                 journal_id).e_invoice:
-            partner = self.env['partner_id'].browse(partner_id)
+            partner = self.env['res.partner'].browse(partner_id)
             if not partner.ipa_code:
                 raise Warning(
                     'Electronic Invoice but IPA code not found in partner')
@@ -342,7 +342,7 @@ firmata digitalmente della fattura XML PA in data \
             reconcile = self.env['account.move.reconcile'].create(
                 {'type': 'manual'})
             if reconcile:
-                new_line.update({'reconcile_partial_id': reconcile})
+                new_line.update({'reconcile_partial_id': reconcile.id})
             if self.type == 'out_invoice':
                 new_line.update({'credit': amount_vat})
             if self.type == 'out_refund':
@@ -362,7 +362,7 @@ firmata digitalmente della fattura XML PA in data \
                     break
             for line in move_lines:
                 if line[2]['account_id'] == cli_account_id:
-                    line[2].update({'reconcile_partial_id': reconcile})
+                    line[2].update({'reconcile_partial_id': reconcile.id})
                     break
             move_lines.append((0, 0, new_line))
             move_lines.append((0, 0, vat_line))
