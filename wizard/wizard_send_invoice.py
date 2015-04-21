@@ -52,8 +52,8 @@ class WizardSendInvoice(models.TransientModel):
             fp.close()
         except Exception, e:
             print 'Exception in create report:', e
-            return (False, str(e))
-        return (True, ret_file_name)
+            return False, str(e)
+        return True, ret_file_name
 
     def upload_file(self, ftp_vals, folder, file_name):
         try:
@@ -103,14 +103,13 @@ class WizardSendInvoice(models.TransientModel):
                 raise Warning(
                     _('Invoice has already been processed, \
                        you can not proceed to send!'))
-            report_name = (invoice.journal_id.printing_module.report_name or
-                           False)
-            print '=================== REPORT NAME', report_name
-            file_name = invoice.company_id.partner_id.vat
-            file_name = '%s%s' % (file_name, invoice.number.replace('/', '_'))
+            file_name = '%s%s' % (invoice.company_id.partner_id.vat,
+                                  invoice.number.replace('/', '_'))
             if e_invoice_type == 'pdf':
                 # ---- Standard for file name is:
                 # ---- ITpartita_iva_mittente<...>.pdf
+                report_name = (invoice.journal_id.printing_module.report_name or
+                               False)
                 report = self.create_report(invoice_ids, report_name,
                                             file_name, False)
                 report_file = report[0] and [report[1]] or []
@@ -133,13 +132,12 @@ class WizardSendInvoice(models.TransientModel):
                 except Exception, e:
                     raise Warning(_('%s' % e))
                 self.upload_file(ftp_vals, folder, file)
-        #
-        # history = invoice.history_ftpa or ''
-        # history = '%s\n' % (history)
-        # history = "%sFattura inviata in data %s" % (
-        #     history, str(datetime.datetime.today()))
-        # invoice_obj.write(
-        #     cr, uid, invoice_ids[0],
-        #     {'history_ftpa': history, 'einvoice_state': 'sent'}, context)
-        #
+            # ----- Update history log
+            history = invoice.history_ftpa or ''
+            history = '%s\n' % history
+            history = '%sFattura inviata in data %s' % (
+                history, str(datetime.datetime.today()))
+            invoice.history_ftpa = history
+            invoice.einvoice_state = 'sent'
+
         return {'type': 'ir.actions.act_window_close'}
