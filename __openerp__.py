@@ -37,12 +37,12 @@
     "data": [
         'security/security.xml',
         'security/ir.model.access.csv',
-        'company/company_view.xml',
-        'account/account_view.xml',
-        'report/account_report.xml',
-        'account/e-invoice_data.xml',
+        'view/company_view.xml',
+        'view/account_view.xml',
+        'view/partner_view.xml',
         'wizard/send_invoice_view.xml',
-        'l10n_it_ipa/partner_view.xml',
+        'report/account_report.xml',
+        'data/e-invoice_data.xml',
         ],
     "active": False,
     "installable": True

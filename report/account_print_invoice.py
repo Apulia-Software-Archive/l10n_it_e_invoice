@@ -21,13 +21,13 @@
 
 
 import time
-from report import report_sxw
+from openerp.report import report_sxw
 
 
-class account_invoice(report_sxw.rml_parse):
+class AccountInvoice(report_sxw.rml_parse):
 
     def __init__(self, cr, uid, name, context):
-        super(account_invoice, self).__init__(cr, uid, name, context=context)
+        super(AccountInvoice, self).__init__(cr, uid, name, context=context)
         self.localcontext.update({
             'time': time,
         })
@@ -37,5 +37,5 @@ report_sxw.report_sxw(
     'report.account.e_invoice',
     'account.invoice',
     'l10n_it_e_invoice/report/account_print_e_invoice.rml',
-    parser=account_invoice
+    parser=AccountInvoice
 )
