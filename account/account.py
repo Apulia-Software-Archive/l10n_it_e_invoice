@@ -295,6 +295,7 @@ firmata digitalmente della fattura XML PA in data \
             self.env['einvoice.history'].create(vals)
         return True
 
+    @api.multi
     def force_check_einvoice_status(self):
         return self.check_einvoice_status()
 
@@ -318,7 +319,7 @@ firmata digitalmente della fattura XML PA in data \
 
             ftp.quit()
         except:
-            raise osv.except_osv('Error', 'Error to FTP')
+            raise Warning('Error to FTP')
 
     @api.multi
     def finalize_invoice_move_lines(self, move_lines):
