@@ -30,8 +30,8 @@
     'license': 'AGPL-3',
     "depends": [
         'account',
-        #'l10n_it_fatturapa',
-        #'l10n_it_fatturapa_out',
+        'l10n_it_fatturapa',
+        'l10n_it_fatturapa_out',
         'l10n_it_ipa',
         ],
     "data": [
@@ -42,7 +42,7 @@
         # 'report/account_report.xml',
         'account/e-invoice_data.xml',
         'wizard/send_invoice_view.xml',
-        # 'l10n_it_ipa/partner_view.xml',
+        'l10n_it_ipa/partner_view.xml',
         ],
     "active": False,
     "installable": True

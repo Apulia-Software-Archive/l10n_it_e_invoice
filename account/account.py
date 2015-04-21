@@ -325,7 +325,7 @@ firmata digitalmente della fattura XML PA in data \
         # manage of split_payment
         super(AccountInvoice, self).finalize_invoice_move_lines(move_lines)
         # modify some data in move lines
-        if (self.type == 'out_invoice' or self.type == 'out_refund'):
+        if self.type == 'out_invoice' or self.type == 'out_refund':
             journal = self.journal_id
             # ----- Check if fiscal positon is active for intra CEE invoice
             if not journal:
@@ -370,6 +370,7 @@ firmata digitalmente della fattura XML PA in data \
 
 
 class AccountJournal(models.Model):
+
     _inherit = "account.journal"
 
     #fields
@@ -384,15 +385,15 @@ the sequence like PA/xxxxxx", default=False)
                                       help="Printing module for e-invoice")
 
 
-class EinvoiceHistory(osv.osv):
+class EinvoiceHistory(models.Model):
 
     _name = "einvoice.history"
     _order = 'date'
 
     name = fields.Many2one('account.invoice', required=True,
-                           ondelete='cascade'),
+                           ondelete='cascade')
     date = fields.Datetime(string='Date Action', required=True)
-    note = fields.Text(),
+    note = fields.Text()
     status_code = fields.Char(size=25)
     status_desc = fields.Text()
     xml_content = fields.Text()

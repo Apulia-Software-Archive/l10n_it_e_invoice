@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <openerp>
     <data noupdate="1">
+
         <record model="ir.sequence.type" id="seq_type_e-invoice">
             <field name="name">E-Invoice Code</field>
             <field name="code">account.invoice</field>
@@ -12,7 +13,7 @@
             <field name="prefix">PA/</field>
         </record>
 
-        <record id="e-inoice_journal" model="account.journal">
+        <record id="e-invoice_journal" model="account.journal">
             <field name="name">E-Invoice Journal</field>
             <field name="code">ZEI</field>
             <field name="sequence_id" ref="seq_e-invoice"/>
@@ -20,5 +21,6 @@
             <field name="printing_module" ref="account_e_invoices"/>
             <field name="type">sale</field>
         </record>
+
     </data>
 </openerp>

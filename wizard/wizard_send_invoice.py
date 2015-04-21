@@ -85,7 +85,9 @@ class WizardSendInvoice(models.TransientModel):
         print '===================', ftp_vals
         company = self.env.user.company_id
         print '===================', company
-        folder = 'imput flusso PDF'
+        # ---- Setting the folder where put pdf file
+        folder = 'input flusso PDF'
+        #import pdb;pdb.set_trace()
         # company_obj = self.pool['res.company']
         # ftp_vals = company_obj.get_ftp_vals(cr, uid, False, context)
         # company = self.pool['res.users'].browse(cr, uid, uid).company_id
