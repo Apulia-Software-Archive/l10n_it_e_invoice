@@ -26,6 +26,7 @@ from ftplib import FTP
 import datetime
 
 from openerp import models, fields, api, _
+from openerp.report import render_report
 from openerp.exceptions import Warning
 
 
@@ -45,8 +46,8 @@ class WizardSendInvoice(models.TransientModel):
                 Exception('Report name and Resources ids are required !!!'))
         try:
             ret_file_name = '/tmp/%s.pdf' % file_name
-            service = netsvc.LocalService("report.%s" % report_name)
-            (result, format) = service.create(cr, uid, res_ids, data, context)
+            (result, format) = render_report(
+                self._cr, self._uid, res_ids, report_name, data)
             fp = open(ret_file_name, 'wb+')
             fp.write(result)
             fp.close()
@@ -118,7 +119,7 @@ class WizardSendInvoice(models.TransientModel):
                         _('PDF is not ready!'))
                 self.upload_file(ftp_vals, folder, report_file[0])
             else:
-                # Send XML file
+                # ----- Send XML file
                 xml_create = self.env['wizard.export.fatturapa'].with_context(
                     active_ids=[invoice.id, ]).exportFatturaPA()
                 attach_id = xml_create.get('res_id', False)
