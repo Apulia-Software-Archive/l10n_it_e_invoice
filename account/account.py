@@ -76,7 +76,7 @@ class AccountInvoice(models.Model):
             [('e_invoice', '=', True)])
         if not pa_journal:
             return res
-        res['value'].update({'journal_id': pa_journal.id})
+        res['value'].update({'journal_id': pa_journal[0].id})
         return res
 
     @api.model
