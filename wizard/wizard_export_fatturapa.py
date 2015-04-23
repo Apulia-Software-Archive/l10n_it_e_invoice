@@ -2,9 +2,9 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (c) 2014 Apulia Software All Rights Reserved.
-#                       www.apuliasoftware.it
-#                       info@apuliasoftware.it
+#    Copyright (c) 2015 Andrea Cometa All Rights Reserved.
+#                       www.andreacometa.it
+#                       openerp@andreacometa.it
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published
@@ -21,5 +21,23 @@
 #
 ##############################################################################
 
-from . import wizard_send_invoice
-from . import wizard_export_fatturapa
+from openerp import models, fields, _, api
+
+
+class WizardExportFatturapa(models.TransientModel):
+
+    @api.model
+    def exportFatturaPA(self):
+
+        invoice_obj = self.env['account.invoice']
+
+        invoice_ids = self.env.context.get('active_ids', False)
+
+        for invoice in invoice_obj.browse(invoice_ids):
+            if not invoice.fatturapa_attachment_out_id:
+                continue
+            notes = 'Effettuato Nuovo Invio della fattura %s in data %s' % (
+                invoice.name, fields.Date.today())
+            invoice.fatturapa_attachment_out_id.fatturapa_notes = notes
+            invoice.fatturapa_attachment_out_id = False
+        return super(WizardExportFatturapa, self).exportFatturaPA()
