@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (c) 2014 Apulia Software All Rights Reserved.
+#    Copyright (c) 2051 Apulia Software All Rights Reserved.
 #                       www.apuliasoftware.it
 #                       info@apuliasoftware.it
 #
@@ -21,7 +21,23 @@
 #
 ##############################################################################
 
+from openerp import models, fields, _, api
 
-from . import company
-from . import account
-from . import sale
+
+class SaleOrder(models.Model):
+
+    _inherit = 'sale.order'
+
+    def _prepare_invoice(self, order, lines):
+
+        invoice_vals = super(SaleOrder, self)._prepare_invoice(order, lines)
+        if not order:
+            return invoice_vals
+        if not order.partner_id.ipa_code:
+            return invoice_vals
+        pa_journal = self.env['account.journal'].search(
+            [('e_invoice', '=', True)])
+        if not pa_journal:
+            return  invoice_vals
+        invoice_vals.update({'journal_id': pa_journal[0].id})
+        return invoice_vals
