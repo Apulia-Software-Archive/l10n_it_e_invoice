@@ -26,18 +26,22 @@ from openerp import models, fields, _, api
 
 class WizardExportFatturapa(models.TransientModel):
 
-    @api.model
-    def exportFatturaPA(self):
+    _inherit = "wizard.export.fatturapa"
 
-        invoice_obj = self.env['account.invoice']
+    def exportFatturaPA(self, cr, uid, ids, context=None):
+        invoice_obj = self.pool['account.invoice']
+        invoice_ids = context.get('active_ids', False)
 
-        invoice_ids = self.env.context.get('active_ids', False)
-
-        for invoice in invoice_obj.browse(invoice_ids):
+        for invoice in invoice_obj.browse(cr, uid, invoice_ids, context):
             if not invoice.fatturapa_attachment_out_id:
                 continue
             notes = 'Effettuato Nuovo Invio della fattura %s in data %s' % (
-                invoice.name, fields.Date.today())
-            invoice.fatturapa_attachment_out_id.fatturapa_notes = notes
-            invoice.fatturapa_attachment_out_id = False
-        return super(WizardExportFatturapa, self).exportFatturaPA()
+                invoice.internal_number, fields.Date.today())
+            self.pool['fatturapa.attachment.out'].write(
+                cr, uid, invoice.fatturapa_attachment_out_id.id,
+                {'fatturapa_notes': notes}, context)
+            invoice_obj.write(
+                cr, uid, invoice.id,
+                {'fatturapa_attachment_out_id': False}, context)
+        return super(WizardExportFatturapa, self).exportFatturaPA(
+            cr, uid, ids, context)
