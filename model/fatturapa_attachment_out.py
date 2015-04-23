@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (c) 2014 Apulia Software All Rights Reserved.
+#    Copyright (c) 2051 Apulia Software All Rights Reserved.
 #                       www.apuliasoftware.it
 #                       info@apuliasoftware.it
 #
@@ -21,8 +21,11 @@
 #
 ##############################################################################
 
+from openerp import models, fields, _, api
 
-from . import company
-from . import account
-from . import sale
-from . import fatturapa_attachment_out
+
+class FatturaPAAttachment(models.Model):
+
+    _inherit = 'fatturapa.attachment.out'
+
+    fatturapa_notes = fields.Text('Notes')
