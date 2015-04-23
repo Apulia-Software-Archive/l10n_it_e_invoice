@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (c) 2014 Apulia Software All Rights Reserved.
+#    Copyright (c) 2015 Apulia Software All Rights Reserved.
 #                       www.apuliasoftware.it
 #                       info@apuliasoftware.it
 #
@@ -21,9 +21,14 @@
 #
 ##############################################################################
 
+from openerp import models, fields, _, api
 
-from . import company
-from . import account
-from . import sale
-from . import fatturapa_attachment_out
-from . import res_partner
+
+class ResPartner(models.Model):
+
+    _inherit = 'res.partner'
+
+    def _commercial_fields(self, cr, uid, context=None):
+        res = super(ResPartner, self)._commercial_fields(cr, uid, ids, context)
+        res.append('fiscalcode')
+        return res
