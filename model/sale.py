@@ -34,7 +34,7 @@ class SaleOrder(models.Model):
         invoice_vals = super(SaleOrder, self)._prepare_invoice(order, lines)
         if not order:
             return invoice_vals
-        if not order.partner_id.ipa_code:
+        if not order.partner_invoice_id.ipa_code:
             return invoice_vals
         pa_journal = self.env['account.journal'].search(
             [('e_invoice', '=', True)])
