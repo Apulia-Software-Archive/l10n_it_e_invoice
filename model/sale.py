@@ -28,6 +28,7 @@ class SaleOrder(models.Model):
 
     _inherit = 'sale.order'
 
+    @api.model
     def _prepare_invoice(self, order, lines):
 
         invoice_vals = super(SaleOrder, self)._prepare_invoice(order, lines)
