@@ -2,7 +2,7 @@
 <openerp>
 <data>
 
-    <record model="ir.ui.view" id="view_notes_fatturapa_attachment.fomr">
+    <record model="ir.ui.view" id="view_notes_fatturapa_attachment.form">
         <field name="name">view.notes.fatturapa.attachment.form</field>
         <field name="model">fatturapa.attachment.out</field>
         <field name="inherit_id" ref="l10n_it_fatturapa_out.view_fatturapa_out_attachment_form"/>
