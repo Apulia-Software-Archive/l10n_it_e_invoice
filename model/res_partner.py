@@ -29,6 +29,6 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     def _commercial_fields(self, cr, uid, context=None):
-        res = super(ResPartner, self)._commercial_fields(cr, uid, ids, context)
+        res = super(ResPartner, self)._commercial_fields(cr, uid, context)
         res.append('fiscalcode')
         return res
