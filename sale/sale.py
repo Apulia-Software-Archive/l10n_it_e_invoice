@@ -21,8 +21,23 @@
 #
 ##############################################################################
 
-from . import company
-from . import account
-from . import wizard
-from . import report
-from . import sale
+from openerp.osv import orm, fields
+
+class SaleOrder(orm.Model):
+
+    _inherit = 'sale.order'
+
+    def _prepare_invoice(self, cr, uid, order, lines, context=None):
+
+        invoice_vals = super(SaleOrder, self)._prepare_invoice(
+            cr, uid, order, lines)
+        if not order:
+            return invoice_vals
+        if not order.partner_invoice_id.ipa_code:
+            return invoice_vals
+        pa_journal = self.pool['account.journal'].search(cr, uid,
+            [('e_invoice', '=', True)])
+        if not pa_journal:
+            return  invoice_vals
+        invoice_vals.update({'journal_id': pa_journal[0]})
+        return invoice_vals

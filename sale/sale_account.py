@@ -21,8 +21,24 @@
 #
 ##############################################################################
 
-from . import company
-from . import account
-from . import wizard
-from . import report
-from . import sale
+from openerp.osv import orm, fields
+
+class StockInvoiceOnshipping(orm.TransientModel):
+
+    _inherit = 'stock.invoice.onshipping'
+
+    def create_invoice(self, cr, uid, ids, context=None):
+        res = super(StockInvoiceOnshipping, self).create_invoice(
+            cr, uid, ids, context)
+        invoice_obj = self.pool['account.invoice']
+        for invoice_id in res:
+            invoice = invoice_obj.browse(cr, uid, invoice_id, context)
+            if not invoice.partner_id.ipa_code:
+                continue
+            pa_journal = self.pool['account.journal'].search(cr, uid,
+                [('e_invoice', '=', True)])
+            if not pa_journal:
+                continue
+            invoice_obj.write(
+                cr, uid, invoice.id, {'journal_id': pa_journal[0]})
+        return res
