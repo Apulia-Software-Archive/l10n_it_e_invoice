@@ -26,3 +26,4 @@ from . import account
 from . import wizard
 from . import report
 from . import sale
+from . import fatturapa_out

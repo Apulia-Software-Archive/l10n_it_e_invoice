@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <record id="view_notes_attachment_fattura_pa_out" model="ir.ui.view">
+        <field name="name">view.notes.attachement.fatturapaout.form</field>
+        <field name="model">fatturapa.attachment.out</field>
+        <field name="inherit_id" ref="l10n_it_fatturapa_out.view_fatturapa_out_attachment_form"/>
+        <field name="arch" type="xml">
+            <field name="out_invoice_ids" position="after">
+                <field name="fatturapa_notes" />
+
+            </field>
+        </field>
+    </record>
+
+</data>
+</openerp>
