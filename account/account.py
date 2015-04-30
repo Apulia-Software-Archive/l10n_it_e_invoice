@@ -68,7 +68,7 @@ class account_invoice(osv.osv):
         )
         if not res or not partner_id:
             return res
-        if not type in ('out_invoice', 'out_refund'):
+        if type not in ('out_invoice', 'out_refund'):
             return res
         partner = self.pool['res.partner'].browse(cr, uid, partner_id)
         if not partner.ipa_code:
@@ -153,13 +153,13 @@ class account_invoice(osv.osv):
                 if node.getElementsByTagName('Codice'):
                     codice = node.getElementsByTagName(
                         'Codice')[0].firstChild.data
-                    errori = '%s: %s\n%s' %(
+                    errori = '%s: %s\n%s' % (
                         codice, descrizione, errori)
             if errori:
                 vals.update({'status_desc': errori,
                              'status_code': 'ERRORE!'})
 
-        if not 'date' in vals:
+        if 'date' not in vals:
             vals.update({'date': datetime.now().strftime('%Y-%m-%d')})
 
         invoice = self.browse(cr, uid, invoice_id, context)
@@ -167,8 +167,8 @@ class account_invoice(osv.osv):
             invoice.company_id.email,
             [invoice.company_id.email],
             'Controllo Fatture Elettroniche',
-            'Fattura: %s - Messaggio %s' %(invoice.internal_number,
-                                           vals.get('status_desc', '')),
+            'Fattura: %s - Messaggio %s' % (invoice.internal_number,
+                                            vals.get('status_desc', '')),
             subtype='plain',
             cr=cr)
 
@@ -210,12 +210,12 @@ class account_invoice(osv.osv):
             ftp.retrbinary("RETR " + filename, lf.write, 8*1024)
             lf.close()
             attachment_data = {
-                'name': '%s.xml.p7m' %invoice.internal_number,
+                'name': '%s.xml.p7m' % invoice.internal_number,
                 'type': 'binary',
-                'datas_fname': '%s.xml.p7m' %invoice.internal_number,
+                'datas_fname': '%s.xml.p7m' % invoice.internal_number,
                 'datas': base64.encodestring(
                     open(local_filename, "rb").read()),
-                'res_name': '%s.xml.p7m' %invoice.internal_number,
+                'res_name': '%s.xml.p7m' % invoice.internal_number,
                 'res_model': 'account.invoice',
                 'res_id': invoice_ids[0],
                 }
@@ -281,7 +281,7 @@ firmata digitalmente della fattura XML PA in data \
                 codice = filename.split('_')
                 if not codice[1]:
                     continue
-                stringa = '%s%s%s' %('%', codice[1], '%')
+                stringa = '%s%s%s' % ('%', codice[1], '%')
                 invoice_ids = self.search(
                     cr, uid,
                     [('sdi_file_name', 'ilike', stringa)])

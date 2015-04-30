@@ -106,12 +106,6 @@ class wizard_send_invoice(osv.osv_memory):
         file_name = invoice.company_id.partner_id.vat
         file_name += invoice.number.replace('/', '_')
         if company.sending_type == 'pdf':
-            # ---- Standard for file name is:
-            # ---- ITpartita_iva_mittente<...>.pdf
-
-            #~ file_name += '<' + invoice.number.replace('/', '_') + '>'
-
-
             report = self.create_report(
                 cr, uid, invoice_ids, report_name, file_name, False, context)
             report_file = report[0] and [report[1]] or []
@@ -136,7 +130,7 @@ class wizard_send_invoice(osv.osv_memory):
             except Exception, e:
                 raise osv.except_osv(
                     _('Error'),
-                    _('%s' %e))
+                    _('%s' % e))
             self.upload_file(cr, uid, ftp_vals, folder, file, context)
 
         history = invoice.history_ftpa or ''

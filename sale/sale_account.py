@@ -23,6 +23,7 @@
 
 from openerp.osv import orm, fields
 
+
 class StockInvoiceOnshipping(orm.TransientModel):
 
     _inherit = 'stock.invoice.onshipping'
@@ -35,8 +36,8 @@ class StockInvoiceOnshipping(orm.TransientModel):
             invoice = invoice_obj.browse(cr, uid, invoice_id, context)
             if not invoice.partner_id.ipa_code:
                 continue
-            pa_journal = self.pool['account.journal'].search(cr, uid,
-                [('e_invoice', '=', True)])
+            pa_journal = self.pool['account.journal'].search(
+                cr, uid, [('e_invoice', '=', True)])
             if not pa_journal:
                 continue
             invoice_obj.write(

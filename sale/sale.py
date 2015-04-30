@@ -23,6 +23,7 @@
 
 from openerp.osv import orm, fields
 
+
 class SaleOrder(orm.Model):
 
     _inherit = 'sale.order'
@@ -35,9 +36,9 @@ class SaleOrder(orm.Model):
             return invoice_vals
         if not order.partner_invoice_id.ipa_code:
             return invoice_vals
-        pa_journal = self.pool['account.journal'].search(cr, uid,
-            [('e_invoice', '=', True)])
+        pa_journal = self.pool['account.journal'].search(
+            cr, uid, [('e_invoice', '=', True)])
         if not pa_journal:
-            return  invoice_vals
+            return invoice_vals
         invoice_vals.update({'journal_id': pa_journal[0]})
         return invoice_vals
