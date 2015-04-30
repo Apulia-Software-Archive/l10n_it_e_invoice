@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    OpenERP, Open Source Management Solution
-#    Copyright (c) 2014 Apulia Software All Rights Reserved.
+#    Copyright (c) 2051 Apulia Software All Rights Reserved.
 #                       www.apuliasoftware.it
 #                       info@apuliasoftware.it
 #
@@ -21,10 +21,25 @@
 #
 ##############################################################################
 
+from openerp import models, fields, api, _
 
-from . import company
-from . import account
-from . import sale
-from . import fatturapa_attachment_out
-from . import res_partner
-from . import stock_account
+
+class StockInvoiceOnshipping(models.TransientModel):
+
+    _inherit = 'stock.invoice.onshipping'
+
+    def create_invoice(self, cr, uid, ids, context=None):
+        res = super(StockInvoiceOnshipping, self).create_invoice(
+            cr, uid, ids, context)
+        invoice_obj = self.pool['account.invoice']
+        for invoice_id in res:
+            invoice = invoice_obj.browse(cr, uid, invoice_id, context)
+            if not invoice.partner_id.ipa_code:
+                continue
+            pa_journal = self.pool['account.journal'].search(cr, uid,
+                [('e_invoice', '=', True)])
+            if not pa_journal:
+                continue
+            invoice_obj.write(
+                cr, uid, invoice.id, {'journal_id': pa_journal[0]})
+        return res

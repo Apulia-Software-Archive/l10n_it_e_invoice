@@ -33,6 +33,7 @@
         'l10n_it_fatturapa',
         'l10n_it_fatturapa_out',
         'l10n_it_ipa',
+        'stock_account',
         ],
     "data": [
         'security/security.xml',
