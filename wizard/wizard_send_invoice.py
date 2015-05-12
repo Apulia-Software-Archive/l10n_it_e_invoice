@@ -44,6 +44,8 @@ class wizard_send_invoice(osv.osv_memory):
             return (
                 False,
                 Exception('Report name and Resources ids are required !!!'))
+        if not data:
+            data = {}
         try:
             ret_file_name = '/tmp/'+file_name+'.pdf'
             service = netsvc.LocalService("report."+report_name)
