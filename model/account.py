@@ -323,7 +323,7 @@ firmata digitalmente della fattura XML PA in data \
     @api.multi
     def finalize_invoice_move_lines(self, move_lines):
         # manage of split_payment
-        super(AccountInvoice, self).finalize_invoice_move_lines(move_lines)
+        move_lines = super(AccountInvoice, self).finalize_invoice_move_lines(move_lines)
         # modify some data in move lines
         if self.type == 'out_invoice' or self.type == 'out_refund':
             journal = self.journal_id
@@ -349,8 +349,7 @@ firmata digitalmente della fattura XML PA in data \
                 new_line.update({'debit': amount_vat})
             vat_line = {}
             for line in move_lines:
-                if 'credit' in line[2] \
-                        and line[2]['credit'] == amount_vat:
+                if ('credit' in line[2]  and line[2]['credit'] == amount_vat and self.type == 'out_invoice') or ('debit' in line[2]  and line[2]['debit'] == amount_vat and self.type == 'out_refund'):
                     vat_line = {
                         'name': 'IVA - Split Payment',
                         'account_id': line[2]['account_id'],
