@@ -349,7 +349,7 @@ firmata digitalmente della fattura XML PA in data \
                 new_line.update({'debit': amount_vat})
             vat_line = {}
             for line in move_lines:
-                if ('credit' in line[2]  and line[2]['credit'] == amount_vat and self.type == 'out_invoice') or ('debit' in line[2]  and line[2]['debit'] == amount_vat and self.type == 'out_refund'):
+                if ('credit' in line[2]  and abs(line[2]['credit'] - amount_vat) < 0.00001 and self.type == 'out_invoice') or ('debit' in line[2]  and abs(line[2]['debit'] - amount_vat) < 0.00001 and self.type == 'out_refund'):
                     vat_line = {
                         'name': 'IVA - Split Payment',
                         'account_id': line[2]['account_id'],
