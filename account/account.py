@@ -244,9 +244,10 @@ firmata digitalmente della fattura XML PA in data \
             if not filename.startswith(company_vat):
                 continue
             filename_value = filename.split('_')
+            _logger.info('Elaboro il file %s' % filename)
             # ----- Search the invoice
             invoice_ids = self.search(
-                cr, uid, [('sdi_file_name', '=', filename_value[1])])
+                cr, uid, [('sdi_file_name', 'ilike', filename_value[1])])
             if not invoice_ids:
                 _logger.info('No invoice found for number %s' % (
                     filename_value[1]))
@@ -258,6 +259,7 @@ firmata digitalmente della fattura XML PA in data \
             lf.close()
             vals = self.read_xml_file(
                 cr, uid, local_filename, invoice_ids[0], context)
+            _logger.info('Valori da scrivere in fattura %s' % vals)
             # ----- Move file in backup folder
             ftp.rename(
                 filename, ftp_vals[4] + '/elaborati/' + filename)
