@@ -241,8 +241,6 @@ firmata digitalmente della fattura XML PA in data \
             if not filename:
                 _logger.info('No file found')
                 continue
-            if not filename.startswith(company_vat):
-                continue
             filename_value = filename.split('_')
             _logger.info('Elaboro il file %s' % filename)
             # ----- Search the invoice
