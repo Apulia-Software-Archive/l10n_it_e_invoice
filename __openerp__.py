@@ -29,6 +29,7 @@
     'website': 'www.apuliasoftware.it',
     'license': 'AGPL-3',
     "depends": [
+        'report',
         'account',
         'l10n_it_fatturapa',
         'l10n_it_fatturapa_out',
@@ -45,6 +46,8 @@
         'wizard/send_invoice_view.xml',
         'report/account_report.xml',
         'data/e-invoice_data.xml',
+        'report/account_print_e_invoice_qweb.xml',
+        'report_qweb.xml',
         ],
     "active": False,
     "installable": True

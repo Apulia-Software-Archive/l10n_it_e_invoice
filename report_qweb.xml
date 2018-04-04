@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+    <report
+            string="Account E-Invoice Qweb"
+            id="action_account_e_invoice_qweb"
+            model="account.invoice"
+            report_type="qweb-pdf"
+            name="l10n_it_e_invoice.account_e_invoice"
+            file="l10n_it_e_invoice.account_e_invoice"
+            menu="False"
+        />
+        <record id="action_account_e_invoice_qweb" model="ir.actions.report.xml"/>
+
+</data>
+</openerp>
