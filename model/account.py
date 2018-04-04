@@ -199,7 +199,7 @@ class AccountInvoice(models.Model):
                     open(local_filename, "rb").read()),
                 'res_name': '%s.xml.p7m' % invoice.internal_number,
                 'res_model': 'account.invoice',
-                'res_id': invoice_ids[0],
+                'res_id': invoice_ids[0].id,
                 }
             self.env['ir.attachment'].create(attachment_data)
 
